@@ -1,0 +1,42 @@
+.hl-word,
+.hl-chars {
+  display: inline-flex;
+}
+
+.hl-letter {
+  display: inline-block;
+  --p: 0;
+}
+
+/* Normal words: letters light up in their glow color as the cursor gets close */
+.hl-word:not(.hl-deploy) .hl-letter {
+  color: color-mix(in srgb, var(--glow) calc(var(--p) * 100%), var(--foreground));
+  -webkit-text-stroke: 0.02em currentColor;
+  text-shadow:
+    0 0 calc(var(--p) * 26px) color-mix(in srgb, var(--glow) calc(var(--p) * 90%), transparent),
+    0 0 calc(var(--p) * 70px) color-mix(in srgb, var(--glow) calc(var(--p) * 60%), transparent);
+}
+
+/* DEPLOY: gradient letters with claw scratches, flipping to white near the cursor.
+   The scratch mask is set from headline.tsx (see claw.ts). */
+.hl-deploy .hl-letter {
+  position: relative;
+  color: transparent;
+  background-image: linear-gradient(90deg, var(--primary), var(--secondary));
+  background-size: calc(var(--n) * 100%) 100%;
+  background-position: calc(var(--i) * 100% / (var(--n) - 1)) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 calc(8px + var(--p) * 26px) color-mix(in srgb, var(--secondary) calc(35% + var(--p) * 55%), transparent));
+}
+
+.hl-deploy .hl-letter::after {
+  content: attr(data-c);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--foreground);
+  -webkit-text-fill-color: var(--foreground);
+  opacity: var(--p);
+  pointer-events: none;
+}
