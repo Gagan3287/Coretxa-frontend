@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://YOUR-DOMAIN.com"),
+  metadataBase: new URL("https://cortexa-io.vercel.app"),
   title: "Cortexa",
   description: "Build, customize and deploy AI assistants trained on your documents.",
 };

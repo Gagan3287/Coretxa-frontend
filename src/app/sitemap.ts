@@ -1,7 +1,7 @@
 
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://YOUR-DOMAIN.com";
+const BASE_URL = "https://cortexa-io.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
