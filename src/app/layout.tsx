@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import PageTransition from "@/components/effects/page-transition";
@@ -12,12 +13,20 @@ const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrai
 export const metadata: Metadata = {
   metadataBase: new URL("https://cortexa-io.vercel.app"),
   title: "Cortexa",
-  description: "Build, customize and deploy AI assistants trained on your documents.",
+  description:
+    "Build, customize and deploy AI assistants trained on your documents.",
+  verification: {
+    google: "3CH9fc390vSq2JJ5CezvbmSaZbhFlS6O022Hi1blDS8",
+  },
 };
 
 const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark'}catch(e){}`;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
