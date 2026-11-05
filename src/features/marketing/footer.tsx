@@ -15,6 +15,7 @@ export default function Footer() {
           <a href="#use-cases" className="hover:text-foreground">Use cases</a>
           <a href="#features" className="hover:text-foreground">Features</a>
           <a href="#faq" className="hover:text-foreground">FAQ</a>
+          <Link href="/pricing" className="hover:text-foreground">Pricing</Link>
           <Link href="/dashboard" className="hover:text-foreground">Dashboard</Link>
         </nav>
       </div>

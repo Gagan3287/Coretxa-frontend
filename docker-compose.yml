@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: cortexa-backend
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    environment:
+      - PORT=5000
+    restart: unless-stopped
+    networks:
+      - cortexa-net
+
+  frontend:
+    build:
+      context: .
+    container_name: cortexa-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - cortexa-net
+
+networks:
+  cortexa-net:
+    name: cortexa-showcase-net

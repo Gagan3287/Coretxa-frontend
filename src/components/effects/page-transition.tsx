@@ -106,7 +106,6 @@ export default function PageTransition() {
       cancelAnimationFrame(first);
       cancelAnimationFrame(second);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Catches clicks on internal links and calls to navigateWithTransition().

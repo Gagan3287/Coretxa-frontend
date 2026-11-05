@@ -38,8 +38,27 @@
   --font-impact: var(--font-anton), Impact, sans-serif;
 }
 
+/* Hide scrollbars completely across all browsers without breaking scrolling */
+html,
+body,
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 html {
   background: var(--background);
+  scroll-padding-top: 5rem;
+  overflow-x: hidden;
 }
 
 body {
@@ -47,6 +66,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -84,10 +104,6 @@ body {
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
 
-html {
-  scroll-padding-top: 5rem;
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -100,6 +116,7 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .float-slow { animation: none; }
 }
+
 /* Hero heading words */
 .hw {
   display: inline-block;

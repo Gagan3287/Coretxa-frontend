@@ -35,8 +35,6 @@ export default function BotsView() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(false);
     listBots()
       .then((data) => !cancelled && setBots(data))
       .catch(() => !cancelled && setError(true))
@@ -64,7 +62,7 @@ export default function BotsView() {
     <div className="mx-auto w-full max-w-[1440px]">
       <PageHeader
         title="Bots"
-        description="Sample data for design purposes. Not connected to the backend yet."
+        description="Create and manage your AI bots. Each bot can be trained on your documents."
         actions={newBotButton}
       />
 
@@ -90,7 +88,17 @@ export default function BotsView() {
           <EmptyState
             title="Couldn't load your bots"
             description="Something went wrong while fetching your bots."
-            action={<Button onClick={() => setAttempt((a) => a + 1)}>Try again</Button>}
+            action={
+              <Button
+                onClick={() => {
+                  setLoading(true);
+                  setError(false);
+                  setAttempt((a) => a + 1);
+                }}
+              >
+                Try again
+              </Button>
+            }
           />
         ) : bots.length === 0 ? (
           <EmptyState

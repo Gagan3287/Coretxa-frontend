@@ -1,0 +1,258 @@
+[
+  {
+    "id": "LAB1_05-08-2026",
+    "title": "Lab 1",
+    "date": "05-08-2026",
+    "topic": "Divide & Conquer Sorting",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_mergesort_student_marks.c",
+        "title": "Student Exam Marks Sorting",
+        "algorithm": "Merge Sort",
+        "description": "Sort student marks in ascending order using Merge Sort so rankings can be published.",
+        "input": "[72, 45, 91, 68, 55, 84]",
+        "expectedOutput": "Sorted Marks:\n45 55 68 72 84 91",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Students", "type": "integer", "default": 6 },
+          { "name": "marks", "label": "Student Exam Marks", "type": "integer-array", "default": [72, 45, 91, 68, 55, 84] }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_quicksort_cricket_scoreboard.c",
+        "title": "Cricket Tournament Scoreboard",
+        "algorithm": "Quick Sort (Descending)",
+        "description": "Sort player runs from highest to lowest using Quick Sort to announce top performers.",
+        "input": "[84, 125, 67, 98, 45, 110]",
+        "expectedOutput": "Sorted Runs:\n125 110 98 84 67 45",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Players", "type": "integer", "default": 6 },
+          { "name": "runs", "label": "Player Runs", "type": "integer-array", "default": [84, 125, 67, 98, 45, 110] }
+        ]
+      },
+      {
+        "id": "Q3",
+        "file": "Q3_quicksort_food_delivery_orders.c",
+        "title": "Online Food Delivery Orders",
+        "algorithm": "Quick Sort (Ascending)",
+        "description": "Sort daily order amounts in ascending order for the sales report using Quick Sort.",
+        "input": "[550, 320, 780, 150, 640, 420]",
+        "expectedOutput": "Sorted Order Amounts:\n150 320 420 550 640 780",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Orders", "type": "integer", "default": 6 },
+          { "name": "orders", "label": "Order Amounts (₹)", "type": "integer-array", "default": [550, 320, 780, 150, 640, 420] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB2_12-08-2026",
+    "title": "Lab 2",
+    "date": "12-08-2026",
+    "topic": "Divide & Conquer Sorting",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_mergesort_library_catalog.c",
+        "title": "Digital Library Catalog Management",
+        "algorithm": "Merge Sort",
+        "description": "Sort millions of Book IDs with guaranteed worst-case performance using Merge Sort.",
+        "input": "[1045, 1021, 1088, 1003, 1056, 1015]",
+        "expectedOutput": "Sorted Book IDs:\n1003 1015 1021 1045 1056 1088",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Books", "type": "integer", "default": 6 },
+          { "name": "bookIDs", "label": "Book IDs", "type": "integer-array", "default": [1045, 1021, 1088, 1003, 1056, 1015] }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_quicksort_bank_transactions.c",
+        "title": "Bank Transaction Amounts",
+        "algorithm": "Quick Sort (Ascending)",
+        "description": "Arrange daily transaction amounts in ascending order before generating financial reports.",
+        "input": "[1250, 450, 980, 2100, 700, 1600]",
+        "expectedOutput": "Sorted Transaction Amounts:\n450 700 980 1250 1600 2100",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Transactions", "type": "integer", "default": 6 },
+          { "name": "transactions", "label": "Transaction Amounts (₹)", "type": "integer-array", "default": [1250, 450, 980, 2100, 700, 1600] }
+        ]
+      },
+      {
+        "id": "Q3",
+        "file": "Q3_quicksort_shopping_prices.c",
+        "title": "Online Shopping Product Prices",
+        "algorithm": "Quick Sort (Ascending)",
+        "description": "Arrange product prices in ascending order before displaying them to customers.",
+        "input": "[850, 299, 1200, 450, 699, 999]",
+        "expectedOutput": "Sorted Product Prices:\n299 450 699 850 999 1200",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Products", "type": "integer", "default": 6 },
+          { "name": "prices", "label": "Product Prices (₹)", "type": "integer-array", "default": [850, 299, 1200, 450, 699, 999] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB3_21-08-2026",
+    "title": "Lab 3",
+    "date": "21-08-2026",
+    "topic": "Searching & Large Integer Multiplication",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_binary_search_isbn.c",
+        "title": "Digital Library ISBN Lookup",
+        "algorithm": "Binary Search (Iterative + Recursive)",
+        "description": "Locate an ISBN in a sorted catalogue and count comparisons for both iterative and recursive Binary Search.",
+        "input": "ISBN list of 10 sorted numbers, search key = 12135",
+        "expectedOutput": "ISBN 12135 found at index 7 (2 comparisons, both methods)",
+        "inputSchema": [
+          { "name": "count", "label": "Number of ISBNs", "type": "integer", "default": 10 },
+          { "name": "isbns", "label": "Sorted ISBN List", "type": "integer-array", "default": [10012, 10254, 10560, 11020, 11450, 11890, 12000, 12135, 12500, 13010] },
+          { "name": "key", "label": "Search Key (ISBN)", "type": "integer", "default": 12135 }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_large_integer_multiplication.c",
+        "title": "Scientific Data Processing",
+        "algorithm": "Divide & Conquer Large Integer Multiplication",
+        "description": "Multiply two very large integers (beyond native int range) by splitting them into halves recursively.",
+        "input": "3141592653589793 x 2718281828459045",
+        "expectedOutput": "Product = 8539734222673565677848730527685",
+        "inputSchema": [
+          { "name": "num1", "label": "First Large Integer", "type": "string", "default": "3141592653589793" },
+          { "name": "num2", "label": "Second Large Integer", "type": "string", "default": "2718281828459045" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB4_02-09-2026",
+    "title": "Lab 4",
+    "date": "02-09-2026",
+    "topic": "Greedy Algorithms",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_fractional_knapsack.c",
+        "title": "Fractional Knapsack Problem",
+        "algorithm": "Greedy (Profit/Weight Ratio)",
+        "description": "Maximize profit for a 60kg capacity bag by greedily picking items with the highest profit-to-weight ratio.",
+        "input": "5 items with given weight & profit, capacity = 60kg",
+        "expectedOutput": "Maximum Total Profit = 310.00",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Items", "type": "integer", "default": 5 },
+          { "name": "items", "label": "Items (Weight & Profit)", "type": "pair-list", "label1": "Weight (kg)", "label2": "Profit (₹)", "default": [{"val1": 10, "val2": 60}, {"val1": 20, "val2": 100}, {"val1": 30, "val2": 120}, {"val1": 15, "val2": 90}, {"val1": 25, "val2": 75}] },
+          { "name": "capacity", "label": "Knapsack Capacity (kg)", "type": "integer", "default": 60 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB5_09-09-2026",
+    "title": "Lab 5",
+    "date": "09-09-2026",
+    "topic": "Greedy Algorithms",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_activity_selection_lab_slots.c",
+        "title": "Computer Laboratory Slot Allocation",
+        "algorithm": "Greedy Activity Selection",
+        "description": "Select the maximum number of non-overlapping lab slots requested by 8 student groups.",
+        "input": "8 groups with start/finish times",
+        "expectedOutput": "Maximum number of groups = 4",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Lab Slot Requests", "type": "integer", "default": 8 },
+          { "name": "activities", "label": "Slot Requests (Start & Finish)", "type": "pair-list", "label1": "Start Time", "label2": "Finish Time", "default": [{"val1": 1, "val2": 3}, {"val1": 2, "val2": 5}, {"val1": 3, "val2": 4}, {"val1": 4, "val2": 7}, {"val1": 5, "val2": 8}, {"val1": 6, "val2": 9}, {"val1": 8, "val2": 10}, {"val1": 9, "val2": 11}] }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_huffman_sensor_data.c",
+        "title": "Sensor Data Compression (IoT)",
+        "algorithm": "Huffman Encoding",
+        "description": "Build a Huffman tree from digit frequencies and encode a sensor reading sequence to save bandwidth.",
+        "input": "Digits 0-4 with frequencies 40,30,15,10,5; data = 012340",
+        "expectedOutput": "Total bits after Huffman Encoding = 15",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Symbols", "type": "integer", "default": 5 },
+          { "name": "symbolFreqs", "label": "Symbol & Frequency", "type": "pair-list", "label1": "Symbol", "label2": "Frequency", "default": [{"val1": "0", "val2": 40}, {"val1": "1", "val2": 30}, {"val1": "2", "val2": 15}, {"val1": "3", "val2": 10}, {"val1": "4", "val2": 5}] },
+          { "name": "sensorData", "label": "Sensor Data Sequence", "type": "string", "default": "012340" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB6_11-09-2026",
+    "title": "Lab 6",
+    "date": "11-09-2026",
+    "topic": "Greedy Algorithms",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_activity_selection_interviews.c",
+        "title": "Online Interview Scheduling",
+        "algorithm": "Greedy Activity Selection",
+        "description": "Schedule the maximum number of candidate interviews on a single panel without overlap.",
+        "input": "7 candidates with start/finish times",
+        "expectedOutput": "Maximum number of interviews = 4",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Candidates", "type": "integer", "default": 7 },
+          { "name": "activities", "label": "Interview Slots (Start & Finish)", "type": "pair-list", "label1": "Start Time", "label2": "Finish Time", "default": [{"val1": 9, "val2": 11}, {"val1": 10, "val2": 12}, {"val1": 11, "val2": 13}, {"val1": 12, "val2": 14}, {"val1": 13, "val2": 15}, {"val1": 14, "val2": 16}, {"val1": 15, "val2": 17}] }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_huffman_chat_message.c",
+        "title": "Chat Application Message Compression",
+        "algorithm": "Huffman Encoding",
+        "description": "Build a Huffman tree from character frequencies and encode a chat message to reduce transmitted data.",
+        "input": "R:35 G:25 B:20 Y:10 K:5 W:5; message = RGBYKW",
+        "expectedOutput": "Total bits after Huffman Encoding = 17",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Character Symbols", "type": "integer", "default": 6 },
+          { "name": "symbolFreqs", "label": "Symbol & Frequency", "type": "pair-list", "label1": "Symbol", "label2": "Frequency", "default": [{"val1": "R", "val2": 35}, {"val1": "G", "val2": 25}, {"val1": "B", "val2": 20}, {"val1": "Y", "val2": 10}, {"val1": "K", "val2": 5}, {"val1": "W", "val2": 5}] },
+          { "name": "message", "label": "Chat Message to Compress", "type": "string", "default": "RGBYKW" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LAB7_16-09-2026",
+    "title": "Lab 7",
+    "date": "16-09-2026",
+    "topic": "Dynamic Programming",
+    "questions": [
+      {
+        "id": "Q1",
+        "file": "Q1_knapsack01_scholarship.c",
+        "title": "Scholarship Allocation (0/1 Knapsack)",
+        "algorithm": "Dynamic Programming",
+        "description": "Maximize total merit score under a fixed scholarship budget where each student is fully selected or not at all.",
+        "input": "5 students with scholarship cost & merit score, budget = 6",
+        "expectedOutput": "Maximum Total Merit Score = 45",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Students", "type": "integer", "default": 5 },
+          { "name": "students", "label": "Student Cost & Merit Score", "type": "pair-list", "label1": "Cost (₹)", "label2": "Merit Score", "default": [{"val1": 2, "val2": 12}, {"val1": 1, "val2": 10}, {"val1": 3, "val2": 20}, {"val1": 2, "val2": 15}, {"val1": 4, "val2": 25}] },
+          { "name": "budget", "label": "Scholarship Budget", "type": "integer", "default": 6 }
+        ]
+      },
+      {
+        "id": "Q2",
+        "file": "Q2_matrix_chain_multiplication.c",
+        "title": "Matrix Chain Multiplication",
+        "algorithm": "Dynamic Programming",
+        "description": "Find the multiplication order for a chain of matrices that minimizes the number of scalar multiplications.",
+        "input": "4 matrices with dimensions p = [5, 10, 15, 20, 25]",
+        "expectedOutput": "Minimum number of scalar multiplications = 4750",
+        "inputSchema": [
+          { "name": "count", "label": "Number of Matrices", "type": "integer", "default": 4 },
+          { "name": "dimensions", "label": "Matrix Dimensions Array (p0..pn)", "type": "integer-array", "default": [5, 10, 15, 20, 25] }
+        ]
+      }
+    ]
+  }
+]

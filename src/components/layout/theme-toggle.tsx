@@ -7,7 +7,10 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
-    setTheme(document.documentElement.dataset.theme || "dark");
+    const frame = requestAnimationFrame(() => {
+      setTheme(document.documentElement.dataset.theme || "dark");
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   function toggle() {

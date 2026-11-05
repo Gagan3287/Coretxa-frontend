@@ -7,6 +7,7 @@ export interface Bot {
   status: BotStatus;
   documentCount: number;
   updatedAt: string;
+  widgetKey?: string;
 }
 
 export interface CreateBotInput {

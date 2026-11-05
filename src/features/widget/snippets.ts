@@ -1,4 +1,5 @@
-export const WIDGET_SRC = "https://YOUR_WIDGET_HOST/cortexa-widget.js";
+export const WIDGET_SRC =
+  process.env.NEXT_PUBLIC_WIDGET_SRC || "https://YOUR_WIDGET_HOST/cortexa-widget.js";
 
 export interface Guide {
   id: string;
@@ -10,7 +11,8 @@ export interface Guide {
 }
 
 export function getGuides(key: string): Guide[] {
-  const tag = `<script src="${WIDGET_SRC}" data-widget-key="${key}" async></script>`;
+  const displayKey = key || "YOUR_WIDGET_KEY";
+  const tag = `<script src="${WIDGET_SRC}" data-widget-key="${displayKey}" async></script>`;
 
   return [
     {

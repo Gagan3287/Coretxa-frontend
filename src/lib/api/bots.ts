@@ -1,35 +1,105 @@
-import type { Bot, CreateBotInput } from "@/types/bot";
+import { apiClient, ApiError } from "./client";
+import type { Bot, BotStatus, CreateBotInput } from "@/types/bot";
 
-// MOCK DATA: replace with real API calls once the backend endpoints are connected.
-const hoursAgo = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
+interface BackendBotDetail {
+  bot_id: string;
+  tenant_id: string;
+  name: string;
+  slug: string;
+  branding_json: Record<string, unknown>;
+  status: string;
+  document_count: number;
+  created_at: string;
+}
 
-let bots: Bot[] = [
-  { id: "b1", name: "Customer Support", description: "Answers product and billing questions from your help center.", status: "active", documentCount: 12, updatedAt: hoursAgo(3) },
-  { id: "b2", name: "HR Policy", description: "Helps employees find leave, benefits and policy answers.", status: "active", documentCount: 8, updatedAt: hoursAgo(26) },
-  { id: "b3", name: "Product Docs", description: "Technical documentation assistant for developers.", status: "processing", documentCount: 4, updatedAt: hoursAgo(1) },
-];
+interface BackendBotListResponse {
+  bots: BackendBotDetail[];
+  total: number;
+}
 
-const delay = (ms = 600) => new Promise((resolve) => setTimeout(resolve, ms));
+interface BackendBotCreateResponse {
+  bot_id: string;
+  slug: string;
+  name: string;
+  status: string;
+  widget_key: string;
+  created_at: string;
+}
+
+function slugify(name: string): string {
+  const base = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 50);
+  return base || "bot";
+}
+
+function mapBot(b: BackendBotDetail): Bot {
+  return {
+    id: b.bot_id,
+    name: b.name,
+    description: (b.branding_json?.description as string) || "",
+    status: (b.status === "active" ? "active" : b.status === "processing" ? "processing" : "failed") as BotStatus,
+    documentCount: b.document_count ?? 0,
+    updatedAt: b.created_at,
+  };
+}
 
 export async function listBots(): Promise<Bot[]> {
-  await delay();
-  return [...bots];
+  try {
+    const data = await apiClient<BackendBotListResponse>("/api/v1/bots");
+    return data.bots.map(mapBot);
+  } catch (err: unknown) {
+    if (err instanceof ApiError && err.status === 404) {
+      return [];
+    }
+    throw new Error(err instanceof Error ? err.message : "Failed to load bots.");
+  }
 }
 
 export async function createBot(input: CreateBotInput): Promise<Bot> {
-  await delay(500);
   const name = input.name.trim();
-  if (bots.some((b) => b.name.toLowerCase() === name.toLowerCase())) {
-    throw new Error("A bot with this name already exists.");
-  }
-  const bot: Bot = {
-    id: `b${Date.now()}`,
+  const description = input.description.trim();
+  const slug = slugify(name);
+
+  const payload = {
     name,
-    description: input.description.trim(),
-    status: "processing",
-    documentCount: 0,
-    updatedAt: new Date().toISOString(),
+    slug,
+    branding_json: description ? { description } : {},
   };
-  bots = [bot, ...bots];
-  return bot;
+
+  try {
+    let res: BackendBotCreateResponse;
+    try {
+      res = await apiClient<BackendBotCreateResponse>("/api/v1/bots", {
+        method: "POST",
+        body: payload,
+      });
+    } catch (err: unknown) {
+      if (err instanceof ApiError && err.status === 409) {
+        // Slug collision — retry once with a unique suffix
+        const suffix = Math.random().toString(36).slice(2, 6);
+        payload.slug = `${slug.slice(0, 55)}-${suffix}`;
+        res = await apiClient<BackendBotCreateResponse>("/api/v1/bots", {
+          method: "POST",
+          body: payload,
+        });
+      } else {
+        throw err;
+      }
+    }
+
+    return {
+      id: res.bot_id,
+      name: res.name,
+      description,
+      status: (res.status === "active" ? "active" : "processing") as BotStatus,
+      documentCount: 0,
+      updatedAt: res.created_at,
+      widgetKey: res.widget_key,
+    };
+  } catch (err: unknown) {
+    throw new Error(err instanceof Error ? err.message : "Failed to create bot.");
+  }
 }

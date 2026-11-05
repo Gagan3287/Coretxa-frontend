@@ -39,8 +39,6 @@ export default function WidgetView() {
 
   useEffect(() => {
     let cancelled = false;
-    setBotsLoading(true);
-    setBotsError(false);
     listBots()
       .then((data) => {
         if (cancelled) return;
@@ -58,8 +56,6 @@ export default function WidgetView() {
     const bot = bots.find((b) => b.id === botId);
     if (!bot) return;
     let cancelled = false;
-    setCfgLoading(true);
-    setCfgError(false);
     getWidgetConfig(bot)
       .then((c) => {
         if (cancelled) return;
@@ -95,6 +91,8 @@ export default function WidgetView() {
   function changeBot(id: string) {
     if (dirty && !window.confirm("Discard your unsaved changes?")) return;
     setStatus("");
+    setCfgLoading(true);
+    setCfgError(false);
     setBotId(id);
   }
 
@@ -139,7 +137,7 @@ export default function WidgetView() {
     <div className="mx-auto w-full max-w-[1440px]">
       <PageHeader
         title="Widget & Embed"
-        description="Sample data for design purposes. Not connected to the backend yet."
+        description="Customize and embed your AI chat widget. Changes are saved directly to your bot's configuration."
         actions={bots.length > 0 ? headerActions : undefined}
       />
 
@@ -153,7 +151,17 @@ export default function WidgetView() {
           <EmptyState
             title="Couldn't load your bots"
             description="Something went wrong while fetching your bots."
-            action={<Button onClick={() => setAttempt((a) => a + 1)}>Try again</Button>}
+            action={
+              <Button
+                onClick={() => {
+                  setBotsLoading(true);
+                  setBotsError(false);
+                  setAttempt((a) => a + 1);
+                }}
+              >
+                Try again
+              </Button>
+            }
           />
         </div>
       ) : bots.length === 0 ? (
@@ -254,16 +262,14 @@ export default function WidgetView() {
                     <h2 className="font-display text-lg font-semibold">Widget key</h2>
                     <div className="mt-4 flex flex-wrap items-center gap-3">
                       <code className="rounded-xl border border-border bg-background px-4 py-2 font-mono text-xs">
-                        {draft.widgetKey}
+                        {draft.widgetKey || "•••••••••••••••• (hidden)"}
                       </code>
-                      <CopyButton text={draft.widgetKey} label="Copy key" />
-                      <Button variant="outline" size="sm" disabled title="Available once the backend supports it">
-                        Regenerate
-                      </Button>
+                      {draft.widgetKey ? (
+                        <CopyButton text={draft.widgetKey} label="Copy key" />
+                      ) : null}
                     </div>
                     <p className="mt-3 text-xs text-muted">
-                      Mock key. A widget key is visible in your page&apos;s HTML, so treat it as public, not
-                      secret. The backend restricts where it works.
+                      Widget keys are shown once upon creation for security. If you didn&apos;t save it, create a new bot or use the key you stored securely.
                     </p>
                   </section>
 

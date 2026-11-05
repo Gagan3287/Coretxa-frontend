@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import ThemeToggle from "@/components/layout/theme-toggle";
+import { getSession } from "@/lib/auth/session";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -14,12 +16,25 @@ const links = [
   { href: "#how", label: "How it works" },
   { href: "#use-cases", label: "Use cases" },
   { href: "#features", label: "Features" },
+  { href: "/pricing", label: "Pricing" },
   { href: "#faq", label: "FAQ" },
 ];
 
 export default function MarketingNav() {
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const session = getSession();
+    if (session?.token) {
+      const frame = requestAnimationFrame(() => {
+        setIsLoggedIn(true);
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+  }, []);
 
   useGSAP(
     () => {
@@ -45,6 +60,13 @@ export default function MarketingNav() {
     { scope: nav }
   );
 
+  const resolveLink = (href: string) => {
+    if (href.startsWith("#")) {
+      return pathname === "/" ? href : `/${href}`;
+    }
+    return href;
+  };
+
   return (
     <header ref={nav} className="fixed inset-x-0 top-0 z-40">
       <div className="border-b border-border bg-background/70 backdrop-blur-xl">
@@ -55,7 +77,11 @@ export default function MarketingNav() {
 
           <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="text-sm text-muted transition hover:text-foreground">
+              <a
+                key={l.href}
+                href={resolveLink(l.href)}
+                className="text-sm text-muted transition hover:text-foreground"
+              >
                 {l.label}
               </a>
             ))}
@@ -65,9 +91,9 @@ export default function MarketingNav() {
             <ThemeToggle />
             <Link
               href="/dashboard"
-              className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 sm:inline-flex"
+              className="hidden rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 sm:inline-flex"
             >
-              Sign in/login
+              Launch Workbench
             </Link>
             <button
               className="text-muted md:hidden"
@@ -85,15 +111,19 @@ export default function MarketingNav() {
             {links.map((l) => (
               <a
                 key={l.href}
-                href={l.href}
+                href={resolveLink(l.href)}
                 onClick={() => setOpen(false)}
                 className="block py-3 text-sm text-muted hover:text-foreground"
               >
                 {l.label}
               </a>
             ))}
-            <Link href="/dashboard" className="mt-2 block py-3 text-sm font-semibold text-primary">
-              Sign in/login
+            <Link
+              href="/dashboard"
+              onClick={() => setOpen(false)}
+              className="mt-2 block py-3 text-sm font-semibold text-secondary"
+            >
+              Launch Workbench
             </Link>
           </nav>
         )}

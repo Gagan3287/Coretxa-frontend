@@ -11,6 +11,7 @@ import FieldInput from "./field-input";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$/;
+const PHONE_RE = /^\+?[0-9]{10,15}$/;
 
 const slugify = (value: string) =>
   value
@@ -20,14 +21,19 @@ const slugify = (value: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 32);
 
-type Errors = Partial<Record<"fullName" | "orgName" | "slug" | "email" | "password", string>>;
+type Errors = Partial<Record<"fullName" | "orgName" | "slug" | "email" | "phone" | "password", string>>;
 
-export default function RegisterForm() {
+interface Props {
+  onToggleMode?: () => void;
+}
+
+export default function RegisterForm({ onToggleMode }: Props) {
   const [fullName, setFullName] = useState("");
   const [orgName, setOrgName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState("");
@@ -44,6 +50,14 @@ export default function RegisterForm() {
     if (orgName.trim().length < 2) next.orgName = "Enter your organization name.";
     if (!SLUG_RE.test(slug)) next.slug = "Use 3 to 32 lowercase letters, numbers or hyphens.";
     if (!EMAIL_RE.test(email.trim())) next.email = "Enter a valid email address.";
+
+    const cleanPhone = phone.trim().replace(/[\s\-()]/g, "");
+    if (!cleanPhone) {
+      next.phone = "Enter your phone number.";
+    } else if (!PHONE_RE.test(cleanPhone)) {
+      next.phone = "Enter a valid phone number (10–15 digits, optional +).";
+    }
+
     if (password.length < 8) next.password = "Use at least 8 characters.";
     return next;
   }
@@ -57,8 +71,16 @@ export default function RegisterForm() {
     if (Object.keys(found).length) return;
 
     setLoading(true);
+    const cleanPhone = phone.trim().replace(/[\s\-()]/g, "");
     try {
-      const session = await registerOrganization({ fullName, orgName: orgName.trim(), orgSlug: slug, email, password });
+      const session = await registerOrganization({
+        fullName: fullName.trim(),
+        orgName: orgName.trim(),
+        orgSlug: slug,
+        email: email.trim(),
+        phone: cleanPhone,
+        password,
+      });
       setSession(session);
       navigateWithTransition("/dashboard");
     } catch (err) {
@@ -143,6 +165,20 @@ export default function RegisterForm() {
           disabled={loading}
         />
         <FieldInput
+          label="Phone number"
+          type="tel"
+          value={phone}
+          onChange={(v) => {
+            setPhone(v);
+            clear("phone");
+          }}
+          placeholder="+1 555 123 4567"
+          autoComplete="tel"
+          hint="10–15 digits with country code."
+          error={errors.phone}
+          disabled={loading}
+        />
+        <FieldInput
           label="Password"
           type="password"
           value={password}
@@ -175,12 +211,18 @@ export default function RegisterForm() {
 
         <p className="auth-reveal text-center text-sm text-muted">
           Already have an account?{" "}
-          <Link href="/login" className="text-secondary underline-offset-4 hover:underline">
+          <Link
+            href="/login"
+            onClick={(e) => {
+              if (onToggleMode && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                e.preventDefault();
+                onToggleMode();
+              }
+            }}
+            className="text-secondary underline-offset-4 hover:underline"
+          >
             Sign in
           </Link>
-        </p>
-        <p className="auth-reveal text-center font-mono text-[11px] tracking-wider text-muted/70">
-          DEMO MODE · NO BACKEND CONNECTED YET
         </p>
       </form>
     </div>

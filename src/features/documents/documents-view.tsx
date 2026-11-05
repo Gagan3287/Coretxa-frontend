@@ -50,23 +50,43 @@ export default function DocumentsView() {
   const [deleting, setDeleting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // ── Load bots first, then docs keyed by those bots ──────────────────────
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(false);
-    Promise.all([listDocuments(), listBots()])
-      .then(([d, b]) => {
+    listBots()
+      .then(async (b) => {
         if (cancelled) return;
-        setDocs(d);
         setBots(b);
         setTargetBot((current) => current || b[0]?.id || "");
+        const d = await listDocuments(b);
+        if (!cancelled) setDocs(d);
       })
-      .catch(() => !cancelled && setError(true))
-      .finally(() => !cancelled && setLoading(false));
+      .catch(() => {
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
     };
   }, [attempt]);
+
+  // ── Polling: refresh every 4 s while any doc is pending/processing ───────
+  useEffect(() => {
+    const hasPending = docs.some((d) => d.status === "processing" || d.status === "uploading");
+    if (!hasPending || loading) return;
+    const timer = setInterval(async () => {
+      try {
+        const updatedBots = bots.length > 0 ? bots : await listBots();
+        const refreshed = await listDocuments(updatedBots);
+        setDocs(refreshed);
+      } catch {
+        // swallow poll errors
+      }
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [docs, bots, loading]);
 
   useEffect(() => subscribeDocuments(setDocs), []);
 
@@ -75,27 +95,39 @@ export default function DocumentsView() {
     [docs, filterBot]
   );
 
-  function handleFiles(files: FileList | File[]) {
+  async function handleFiles(files: FileList | File[]) {
     const bot = bots.find((b) => b.id === targetBot);
     if (!bot) {
       setUploadErrors(["Choose a bot to upload to first."]);
       return;
     }
     const errors: string[] = [];
+    const uploads: Promise<unknown>[] = [];
     Array.from(files).forEach((file) => {
       const problem = validateFile(file);
-      if (problem) errors.push(problem);
-      else uploadDocument(file, bot);
+      if (problem) {
+        errors.push(problem);
+      } else {
+        uploads.push(
+          uploadDocument(file, bot).catch((err: unknown) => {
+            errors.push(`${file.name}: ${err instanceof Error ? err.message : String(err)}`);
+          })
+        );
+      }
     });
     setUploadErrors(errors);
+    await Promise.all(uploads);
   }
 
   async function confirmDelete() {
     if (!toDelete) return;
     setDeleting(true);
     try {
-      await deleteDocument(toDelete.id);
+      await deleteDocument(toDelete.id, toDelete.botId);
       setToDelete(null);
+    } catch (err: unknown) {
+      // Keep dialog open; surface error
+      console.error("Delete failed:", err instanceof Error ? err.message : String(err));
     } finally {
       setDeleting(false);
     }
@@ -107,7 +139,7 @@ export default function DocumentsView() {
     <div className="mx-auto w-full max-w-[1440px]">
       <PageHeader
         title="Documents"
-        description="Sample data for design purposes. Not connected to the backend yet."
+        description="Upload and manage PDF documents for your bots. Documents are processed and embedded automatically."
       />
 
       {loading ? (
@@ -121,7 +153,17 @@ export default function DocumentsView() {
           <EmptyState
             title="Couldn't load your documents"
             description="Something went wrong while fetching your documents."
-            action={<Button onClick={() => setAttempt((a) => a + 1)}>Try again</Button>}
+            action={
+              <Button
+                onClick={() => {
+                  setLoading(true);
+                  setError(false);
+                  setAttempt((a) => a + 1);
+                }}
+              >
+                Try again
+              </Button>
+            }
           />
         </div>
       ) : noBots ? (

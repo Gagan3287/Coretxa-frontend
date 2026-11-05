@@ -31,10 +31,8 @@ export default function CursorTrail() {
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!enabled) return;
 
-    // Hide the system cursor on this page; the dot below replaces it.
+    // Native cursor remains responsive with zero input latency; glowing ambient comet tail renders on canvas
     const style = document.createElement("style");
-    style.textContent = "*,*::before,*::after{cursor:none !important}";
-    document.head.appendChild(style);
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const resize = () => {

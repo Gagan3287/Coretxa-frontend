@@ -7,7 +7,7 @@ interface Props {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: "text" | "email" | "password";
+  type?: "text" | "email" | "password" | "tel";
   placeholder?: string;
   error?: string;
   hint?: string;

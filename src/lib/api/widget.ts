@@ -1,32 +1,53 @@
+import { apiClient } from "./client";
 import type { WidgetConfig } from "@/types/widget";
 
-// MOCK DATA: replace with real API calls once the backend endpoints exist.
-const store = new Map<string, WidgetConfig>();
-const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
+// Backend BotDetail branding_json maps to WidgetConfig fields
+interface BackendBotDetail {
+  bot_id: string;
+  name: string;
+  slug: string;
+  branding_json: Record<string, unknown>;
+  status: string;
+  document_count: number;
+  created_at: string;
+}
 
-const clone = (c: WidgetConfig): WidgetConfig => ({ ...c, allowedOrigins: [...c.allowedOrigins] });
+function brandingToWidgetConfig(bot: BackendBotDetail): WidgetConfig {
+  const b = bot.branding_json || {};
+  return {
+    botId: bot.bot_id,
+    displayName: (b.display_name as string) || bot.name,
+    greeting: (b.greeting as string) || `Hi! Ask me anything about ${bot.name}.`,
+    color: (b.color as string) || "#4f46e5",
+    position: ((b.position as string) === "left" ? "left" : "right") as "left" | "right",
+    allowedOrigins: Array.isArray(b.allowed_origins) ? (b.allowed_origins as string[]) : [],
+    // widget_key is only available at creation time — stored in session if newly created
+    widgetKey: (b.widget_key_display as string) || "",
+    hostedUrl: `${process.env.NEXT_PUBLIC_HOSTED_CHAT_URL || "https://chat.cortexa.io"}/b/${bot.bot_id}`,
+  };
+}
+
+function widgetConfigToBranding(config: WidgetConfig): Record<string, unknown> {
+  return {
+    display_name: config.displayName,
+    greeting: config.greeting,
+    color: config.color,
+    position: config.position,
+    allowed_origins: config.allowedOrigins,
+  };
+}
 
 export async function getWidgetConfig(bot: { id: string; name: string }): Promise<WidgetConfig> {
-  await delay(400);
-  let config = store.get(bot.id);
-  if (!config) {
-    config = {
-      botId: bot.id,
-      displayName: bot.name,
-      greeting: `Hi! Ask me anything about ${bot.name}.`,
-      color: "#4f46e5",
-      position: "right",
-      allowedOrigins: [],
-      widgetKey: `pk_mock_${bot.id}`,
-      hostedUrl: `https://chat.cortexa.example/b/${bot.id}`,
-    };
-    store.set(bot.id, config);
-  }
-  return clone(config);
+  const data = await apiClient<BackendBotDetail>(`/api/v1/bots/${bot.id}`);
+  return brandingToWidgetConfig(data);
 }
 
 export async function saveWidgetConfig(config: WidgetConfig): Promise<WidgetConfig> {
-  await delay(500);
-  store.set(config.botId, clone(config));
-  return clone(config);
+  const data = await apiClient<BackendBotDetail>(`/api/v1/bots/${config.botId}`, {
+    method: "PATCH",
+    body: {
+      branding_json: widgetConfigToBranding(config),
+    },
+  });
+  return brandingToWidgetConfig(data);
 }

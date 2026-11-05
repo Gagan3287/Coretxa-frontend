@@ -6,14 +6,18 @@ import MagneticButton from "@/components/ui/magnetic-button";
 import { login } from "@/lib/api/auth";
 import { setSession } from "@/lib/auth/session";
 import { anton } from "@/lib/fonts";
-import { navigateWithTransition } from "@/lib/utils/navigate";
+import { navigateWithTransition, sanitizeNextPath } from "@/lib/utils/navigate";
 import FieldInput from "./field-input";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Errors = Partial<Record<"orgSlug" | "email" | "password", string>>;
 
-export default function LoginForm() {
+interface Props {
+  onToggleMode?: () => void;
+}
+
+export default function LoginForm({ onToggleMode }: Props) {
   const [orgSlug, setOrgSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +45,9 @@ export default function LoginForm() {
     try {
       const session = await login({ orgSlug: orgSlug.trim().toLowerCase(), email, password });
       setSession(session);
-      navigateWithTransition("/dashboard");
+      const rawNext = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
+      const target = sanitizeNextPath(rawNext, "/dashboard");
+      navigateWithTransition(target);
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setLoading(false);
@@ -120,12 +126,18 @@ export default function LoginForm() {
 
         <p className="auth-reveal text-center text-sm text-muted">
           New to Cortexa?{" "}
-          <Link href="/register" className="text-secondary underline-offset-4 hover:underline">
+          <Link
+            href="/register"
+            onClick={(e) => {
+              if (onToggleMode && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                e.preventDefault();
+                onToggleMode();
+              }
+            }}
+            className="text-secondary underline-offset-4 hover:underline"
+          >
             Create an account
           </Link>
-        </p>
-        <p className="auth-reveal text-center font-mono text-[11px] tracking-wider text-muted/70">
-          DEMO MODE · NO BACKEND CONNECTED YET
         </p>
       </form>
     </div>
