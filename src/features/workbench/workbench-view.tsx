@@ -274,7 +274,7 @@ export default function WorkbenchView() {
       {/* Main Grid: Left Lab Navigator (col 3) + Center Interactive Runner (col 9) */}
       <div className="grid gap-6 lg:grid-cols-12">
         {/* Left Column: Labs & Questions Selector */}
-        <div className="space-y-4 lg:col-span-4 xl:col-span-3">
+        <div className="space-y-4 lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-border/80 bg-surface/80 p-4 shadow-xl backdrop-blur-md">
             <div className="mb-3 flex items-center justify-between px-2">
               <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">
@@ -285,7 +285,7 @@ export default function WorkbenchView() {
               </span>
             </div>
 
-            <div className="space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
+            <div className="space-y-2">
               {labs.map((lab) => {
                 const isSelectedLab = lab.id === selectedLabId;
                 return (
@@ -633,7 +633,10 @@ export default function WorkbenchView() {
                       </button>
                     </div>
 
-                    <div className="max-h-[550px] overflow-auto rounded-xl border border-border/80 bg-[#060813] p-4">
+                    <div
+                      data-lenis-prevent
+                      className="max-h-[550px] overflow-auto rounded-xl border border-border/80 bg-[#060813] p-4"
+                    >
                       {loadingSource ? (
                         <div className="flex h-36 items-center justify-center font-mono text-xs text-muted">
                           <RefreshCw className="mr-2 h-4 w-4 animate-spin text-primary" />
