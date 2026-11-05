@@ -8,7 +8,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import ThemeToggle from "@/components/layout/theme-toggle";
-import { getSession } from "@/lib/auth/session";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -23,18 +22,7 @@ const links = [
 export default function MarketingNav() {
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const session = getSession();
-    if (session?.token) {
-      const frame = requestAnimationFrame(() => {
-        setIsLoggedIn(true);
-      });
-      return () => cancelAnimationFrame(frame);
-    }
-  }, []);
 
   useGSAP(
     () => {

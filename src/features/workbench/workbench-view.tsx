@@ -242,14 +242,14 @@ export default function WorkbenchView() {
             Algorithms & Computing Workbench
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Live click-to-run showcase of all 7 Labs & 15 C Programs. Compiles real C code with gcc -O2 on request.
+            Live click-to-run showcase of all 7 Labs & 15 C Programs. Powered by integrated Cortexa engine.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="rounded-xl border border-border/60 bg-background/50 px-3.5 py-2 text-right">
-            <p className="font-mono text-[10px] text-muted">BACKEND API</p>
-            <p className="font-mono text-xs text-foreground font-semibold">{getApiBaseUrl()}</p>
+            <p className="font-mono text-[10px] text-muted">BACKEND ENGINE</p>
+            <p className="font-mono text-xs text-secondary font-semibold">Integrated (Auto-Deployed)</p>
           </div>
           <button
             onClick={handleRun}
@@ -566,9 +566,9 @@ export default function WorkbenchView() {
                           <div className="space-y-2 text-cyan-400">
                             <div className="flex items-center gap-2">
                               <RefreshCw className="h-4 w-4 animate-spin" />
-                              <span>[cortexa] Invoking gcc -O2 on {selectedQuestion.file}...</span>
+                              <span>[cortexa] Executing algorithm on {selectedQuestion.file}...</span>
                             </div>
-                            <p className="text-muted">Piping stdin payload into native binary executable stream...</p>
+                            <p className="text-muted">Piping stdin payload into execution stream...</p>
                           </div>
                         ) : !hasRun ? (
                           <div className="flex flex-col items-center justify-center py-8 text-center text-muted">

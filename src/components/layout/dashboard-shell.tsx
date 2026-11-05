@@ -10,28 +10,16 @@ import {
   CreditCard,
   FileText,
   Gauge,
+  Home,
   LayoutDashboard,
-  LogOut,
   Menu,
   ScrollText,
   Settings,
   Terminal,
   X,
 } from "lucide-react";
-import Skeleton from "@/components/ui/skeleton";
 import ThemeToggle from "./theme-toggle";
-import { apiClient } from "@/lib/api/client";
-import { clearSession, getSession, setSession } from "@/lib/auth/session";
 import type { AuthUser } from "@/types/auth";
-
-interface BackendUserMeResponse {
-  id: string;
-  full_name: string | null;
-  email: string;
-  tenant_slug: string | null;
-  tenant_id: string | null;
-  role: string;
-}
 
 const nav = [
   { href: "/dashboard", label: "Workbench & Labs", icon: Terminal },
@@ -82,88 +70,21 @@ function Logo() {
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
-  const [userProfile, setUserProfile] = useState<AuthUser | null>(null);
-  const pathname = usePathname();
   const router = useRouter();
 
-  const [reloadCount, setReloadCount] = useState(0);
+  const userProfile: AuthUser = {
+    id: "dev-user",
+    fullName: "Cortexa Developer",
+    email: "developer@cortexa.io",
+    orgSlug: "cortexa-engine",
+    role: "platform_admin",
+  };
 
-  useEffect(() => {
-    let cancelled = false;
-    const session = getSession();
-    if (!session?.token) {
-      clearSession();
-      const next = encodeURIComponent(pathname || "/dashboard");
-      router.replace(`/login?next=${next}`);
-      return;
-    }
-
-    apiClient<BackendUserMeResponse>("/auth/me")
-      .then((me) => {
-        if (cancelled) return;
-        const updatedUser: AuthUser = {
-          id: me.id,
-          fullName: me.full_name || session.user?.fullName || me.email.split("@")[0],
-          email: me.email,
-          orgSlug: me.tenant_slug || session.user?.orgSlug || "",
-          role: (me.role === "platform_admin" ? "platform_admin" : "tenant_admin") as AuthUser["role"],
-        };
-        setSession({ ...session, user: updatedUser });
-        setUserProfile(updatedUser);
-        setIsChecking(false);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        clearSession();
-        const next = encodeURIComponent(pathname || "/dashboard");
-        router.replace(`/login?next=${next}`);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname, router, reloadCount]);
-
-  // Re-verify if restored from browser bfcache (Back/Forward navigation)
-  useEffect(() => {
-    const onPageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) {
-        setReloadCount((c) => c + 1);
-      }
-    };
-    window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
-  }, []);
-
-  function handleLogout() {
-    clearSession();
-    router.replace("/login");
+  function handleReturnHome() {
+    router.push("/");
   }
 
-  // Show clean skeleton while verifying — NEVER flash protected content
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="flex h-16 items-center justify-between border-b border-border px-6">
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-8 w-24 rounded-full" />
-        </div>
-        <div className="p-8 space-y-6 max-w-5xl mx-auto">
-          <Skeleton className="h-10 w-48" />
-          <div className="grid gap-6 md:grid-cols-3">
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const initials = (userProfile?.fullName || userProfile?.email || "CX")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = "CX";
 
   return (
     <div className="min-h-screen">
@@ -186,11 +107,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </div>
           <button
             type="button"
-            onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+            onClick={handleReturnHome}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-foreground/5 hover:text-foreground"
           >
-            <LogOut size={16} />
-            <span>Sign out</span>
+            <Home size={16} />
+            <span>Back to Home</span>
           </button>
         </div>
       </aside>
@@ -220,11 +141,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               </div>
               <button
                 type="button"
-                onClick={handleLogout}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+                onClick={handleReturnHome}
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-foreground/5 hover:text-foreground"
               >
-                <LogOut size={16} />
-                <span>Sign out</span>
+                <Home size={16} />
+                <span>Back to Home</span>
               </button>
             </div>
           </aside>
