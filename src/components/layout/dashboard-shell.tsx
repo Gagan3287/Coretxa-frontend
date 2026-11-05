@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Activity,
   Bot,
+  ChevronLeft,
+  ChevronRight,
   Code,
   CreditCard,
   FileText,
@@ -70,7 +72,26 @@ function Logo() {
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
+
+  // Load saved preference
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("cortexa_sidebar_collapsed");
+      if (saved === "true") setIsCollapsed(true);
+    } catch {}
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("cortexa_sidebar_collapsed", String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   const userProfile: AuthUser = {
     id: "dev-user",
@@ -88,10 +109,35 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <div className="min-h-screen">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col justify-between border-r border-border bg-surface md:flex">
+      {/* Desktop Collapsible Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-30 hidden md:flex flex-col justify-between border-r border-border bg-surface transition-all duration-300 ease-in-out ${
+          isCollapsed ? "-translate-x-full w-64" : "translate-x-0 w-64"
+        }`}
+      >
+        {/* Floating Arrow Toggle Button on the sidebar right border */}
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          aria-label="Collapse sidebar"
+          title="Collapse sidebar"
+          className="absolute -right-3.5 top-20 z-40 hidden md:flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-lg transition-transform hover:scale-110 hover:border-primary hover:text-foreground active:scale-95"
+        >
+          <ChevronLeft size={14} />
+        </button>
+
         <div>
-          <div className="flex h-16 items-center px-6">
+          <div className="flex h-16 items-center justify-between px-6">
             <Logo />
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background/50 text-muted transition hover:bg-background hover:text-foreground active:scale-95"
+              title="Collapse sidebar"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft size={16} />
+            </button>
           </div>
           <NavLinks />
         </div>
@@ -116,6 +162,20 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </div>
       </aside>
 
+      {/* Floating Edge Arrow Tab when Sidebar is Minimized/Collapsed */}
+      {isCollapsed && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          aria-label="Open sidebar"
+          title="Open sidebar"
+          className="fixed left-0 top-20 z-40 hidden md:flex h-10 w-8 items-center justify-center rounded-r-xl border border-l-0 border-border bg-surface/90 backdrop-blur-md text-muted shadow-2xl transition-all hover:w-9 hover:border-primary/50 hover:text-secondary active:scale-95"
+        >
+          <ChevronRight size={18} />
+        </button>
+      )}
+
+      {/* Mobile Drawer */}
       {open && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
@@ -152,9 +212,23 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </div>
       )}
 
-      <div className="md:pl-64">
+      {/* Main Content Area */}
+      <div className={`transition-all duration-300 ease-in-out ${isCollapsed ? "md:pl-0" : "md:pl-64"}`}>
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur">
           <div className="flex items-center gap-3">
+            {/* Desktop Minimizer Toggle in Header */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label={isCollapsed ? "Open sidebar" : "Collapse sidebar"}
+              title={isCollapsed ? "Open sidebar" : "Collapse sidebar"}
+              className="hidden md:flex items-center gap-1.5 rounded-lg border border-border/60 bg-surface/70 px-2.5 py-1.5 text-xs text-muted transition hover:border-border hover:bg-surface hover:text-foreground active:scale-95"
+            >
+              {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+              <span className="font-mono text-[11px]">{isCollapsed ? "Sidebar" : "Collapse"}</span>
+            </button>
+
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setOpen(true)}
               aria-label="Open menu"
