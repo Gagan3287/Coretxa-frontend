@@ -104,6 +104,10 @@ body {
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
 
+html {
+  scroll-padding-top: 5rem;
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -116,7 +120,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .float-slow { animation: none; }
 }
-
 /* Hero heading words */
 .hw {
   display: inline-block;

@@ -20,14 +20,14 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
 
-    const handleIntroDone = () => {
+    const onIntroDone = () => {
       lenis.resize();
       ScrollTrigger.refresh();
     };
-    window.addEventListener("cortexa:intro-done", handleIntroDone);
+    window.addEventListener("cortexa:intro-done", onIntroDone);
 
     return () => {
-      window.removeEventListener("cortexa:intro-done", handleIntroDone);
+      window.removeEventListener("cortexa:intro-done", onIntroDone);
       gsap.ticker.remove(tick);
       lenis.destroy();
     };

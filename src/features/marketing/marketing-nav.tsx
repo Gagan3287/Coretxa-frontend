@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import ThemeToggle from "@/components/layout/theme-toggle";
+import { getSession } from "@/lib/auth/session";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -22,7 +23,18 @@ const links = [
 export default function MarketingNav() {
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const session = getSession();
+    if (session?.token) {
+      const frame = requestAnimationFrame(() => {
+        setIsLoggedIn(true);
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+  }, []);
 
   useGSAP(
     () => {
@@ -79,9 +91,9 @@ export default function MarketingNav() {
             <ThemeToggle />
             <Link
               href="/dashboard"
-              className="hidden rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 sm:inline-flex"
+              className="hidden rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 sm:inline-flex"
             >
-              Launch Workbench
+              Open Dashboard
             </Link>
             <button
               className="text-muted md:hidden"
@@ -111,7 +123,7 @@ export default function MarketingNav() {
               onClick={() => setOpen(false)}
               className="mt-2 block py-3 text-sm font-semibold text-secondary"
             >
-              Launch Workbench
+              Open Dashboard
             </Link>
           </nav>
         )}

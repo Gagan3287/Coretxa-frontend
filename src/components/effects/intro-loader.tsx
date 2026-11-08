@@ -2,12 +2,9 @@
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { anton } from "@/lib/fonts";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const ONCE_PER_SESSION = true; // Skip intro for returning visitors in current session
+const ONCE_PER_SESSION = false; // set to true before launch so returning visitors skip the intro
 const WAVE_PERIOD = 400; // width of one full wave
 const WAVE_HEIGHT = 20; // how tall the wave crests are
 const LEVEL_EMPTY = 335; // wave position when the word is empty
@@ -83,14 +80,6 @@ export default function IntroLoader() {
     window.addEventListener("wheel", block, { capture: true, passive: false });
     window.addEventListener("touchmove", block, { capture: true, passive: false });
 
-    const unblock = () => {
-      window.removeEventListener("wheel", block, { capture: true });
-      window.removeEventListener("touchmove", block, { capture: true });
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      ScrollTrigger.refresh();
-    };
-
     const render = () => {
       const p = state.p;
       if (numRef.current) numRef.current.textContent = String(Math.round(p));
@@ -100,13 +89,20 @@ export default function IntroLoader() {
     };
     render();
 
-    tweens.push(gsap.to(front, { x: -WAVE_PERIOD, duration: 1.6, ease: "none", repeat: -1 }));
-    tweens.push(gsap.fromTo(back, { x: -WAVE_PERIOD }, { x: 0, duration: 2.2, ease: "none", repeat: -1 }));
+    tweens.push(gsap.to(front, { x: -WAVE_PERIOD, duration: 1.8, ease: "none", repeat: -1 }));
+    tweens.push(gsap.fromTo(back, { x: -WAVE_PERIOD }, { x: 0, duration: 2.6, ease: "none", repeat: -1 }));
 
     const progressTo = (vars: gsap.TweenVars) =>
       new Promise<void>((resolve) => {
         tweens.push(gsap.to(state, { ...vars, onUpdate: render, onComplete: resolve }));
       });
+
+    const unblock = () => {
+      window.removeEventListener("wheel", block, { capture: true });
+      window.removeEventListener("touchmove", block, { capture: true });
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
 
     const finish = () => {
       introPlayedThisLoad = true;
@@ -117,47 +113,47 @@ export default function IntroLoader() {
       setGone(true);
     };
 
-    // Hard safety failsafe: unblock and reveal if anything pauses or takes >2.4s
+    // Hard safety failsafe: unblock and reveal if anything pauses or takes >2.2s
     const safetyTimer = window.setTimeout(() => {
       unblock();
       html.dataset.intro = "done";
       window.dispatchEvent(new Event("cortexa:intro-done"));
       setGone(true);
-    }, 2400);
+    }, 2200);
 
     const run = async () => {
       const family = textRef.current ? getComputedStyle(textRef.current).fontFamily : "";
       await Promise.race([
         document.fonts.load(`300px ${family}`, "CORTEXA").catch(() => []),
-        wait(400),
+        wait(1500),
       ]);
       if (cancelled) return;
 
-      tweens.push(gsap.to(contentEl, { opacity: 1, duration: 0.35, ease: "power2.out" }));
-      await progressTo({ p: 85, duration: 0.85, ease: "power2.out" });
+      tweens.push(gsap.to(contentEl, { opacity: 1, duration: 0.5, ease: "power2.out" }));
+      await progressTo({ p: 80, duration: 1.8, ease: "power2.out" });
       if (cancelled) return;
 
-      await Promise.race([pageLoaded(), wait(500)]);
+      await Promise.race([pageLoaded(), wait(3500)]);
       if (cancelled) return;
 
-      await progressTo({ p: 100, duration: 0.35, ease: "power2.inOut" });
+      await progressTo({ p: 100, duration: 0.7, ease: "power2.inOut" });
       if (cancelled) return;
-      await wait(120);
+      await wait(250);
       if (cancelled) return;
 
       window.scrollTo(0, 0);
-      tweens.push(gsap.to(contentEl, { scale: 1.04, opacity: 0, duration: 0.4, ease: "power2.in" }));
+      tweens.push(gsap.to(contentEl, { scale: 1.05, opacity: 0, duration: 0.55, ease: "power2.in" }));
       tweens.push(
         gsap.to(overlayEl, {
           yPercent: -100,
-          duration: 0.7,
-          delay: 0.1,
+          duration: 0.95,
+          delay: 0.2,
           ease: "power4.inOut",
           onComplete: finish,
         })
       );
       tweens.push(
-        gsap.delayedCall(0.3, () => {
+        gsap.delayedCall(0.55, () => {
           unblock();
           html.dataset.intro = "done";
           window.dispatchEvent(new Event("cortexa:intro-done"));

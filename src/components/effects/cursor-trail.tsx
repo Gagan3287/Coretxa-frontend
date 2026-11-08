@@ -31,9 +31,7 @@ export default function CursorTrail() {
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!enabled) return;
 
-    // Native cursor remains responsive with zero input latency; glowing ambient comet tail renders on canvas
-    const style = document.createElement("style");
-
+    // Keep native cursor for responsive feel while displaying trailing aura
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const resize = () => {
       canvas.width = window.innerWidth * dpr;
@@ -175,7 +173,6 @@ export default function CursorTrail() {
 
     return () => {
       cancelAnimationFrame(raf);
-      style.remove();
       observer.disconnect();
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("resize", resize);

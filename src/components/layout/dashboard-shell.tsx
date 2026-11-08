@@ -14,17 +14,28 @@ import {
   Gauge,
   Home,
   LayoutDashboard,
+  LogOut,
   Menu,
   ScrollText,
   Settings,
-  Terminal,
   X,
 } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
+import { apiClient } from "@/lib/api/client";
+import { clearSession, getSession, setSession } from "@/lib/auth/session";
 import type { AuthUser } from "@/types/auth";
 
+interface BackendUserMeResponse {
+  id: string;
+  full_name: string | null;
+  email: string;
+  tenant_slug: string | null;
+  tenant_id: string | null;
+  role: string;
+}
+
 const nav = [
-  { href: "/dashboard", label: "Workbench & Labs", icon: Terminal },
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/bots", label: "Bots", icon: Bot },
   { href: "/dashboard/documents", label: "Documents", icon: FileText },
   { href: "/dashboard/widget", label: "Widget & Embed", icon: Code },
@@ -73,9 +84,17 @@ function Logo() {
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [userProfile, setUserProfile] = useState<AuthUser>({
+    id: "dev-user",
+    fullName: "Cortexa Developer",
+    email: "developer@cortexa.io",
+    orgSlug: "cortexa-engine",
+    role: "platform_admin",
+  });
+  const pathname = usePathname();
   const router = useRouter();
 
-  // Load saved preference
+  // Load saved sidebar preference
   useEffect(() => {
     try {
       const saved = localStorage.getItem("cortexa_sidebar_collapsed");
@@ -93,19 +112,42 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     });
   };
 
-  const userProfile: AuthUser = {
-    id: "dev-user",
-    fullName: "Cortexa Developer",
-    email: "developer@cortexa.io",
-    orgSlug: "cortexa-engine",
-    role: "platform_admin",
-  };
+  // Gracefully verify session if token exists
+  useEffect(() => {
+    let cancelled = false;
+    const session = getSession();
+    if (!session?.token) {
+      // Demo fallback: default active developer session
+      return;
+    }
+
+    apiClient<BackendUserMeResponse>("/auth/me")
+      .then((me) => {
+        if (cancelled) return;
+        const updatedUser: AuthUser = {
+          id: me.id,
+          fullName: me.full_name || session.user?.fullName || me.email.split("@")[0],
+          email: me.email,
+          orgSlug: me.tenant_slug || session.user?.orgSlug || "cortexa",
+          role: (me.role === "platform_admin" ? "platform_admin" : "tenant_admin") as AuthUser["role"],
+        };
+        setSession({ ...session, user: updatedUser });
+        setUserProfile(updatedUser);
+      })
+      .catch(() => {
+        // If backend is offline/not reachable, gracefully retain developer profile
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   function handleReturnHome() {
     router.push("/");
   }
 
-  const initials = "CX";
+  const initials = (userProfile.fullName || "CX").slice(0, 2).toUpperCase();
 
   return (
     <div className="min-h-screen">
@@ -115,7 +157,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           isCollapsed ? "-translate-x-full w-64" : "translate-x-0 w-64"
         }`}
       >
-        {/* Floating Arrow Toggle Button on the sidebar right border */}
+        {/* Floating Arrow Toggle Button on the sidebar border */}
         <button
           type="button"
           onClick={toggleSidebar}
@@ -145,10 +187,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         <div className="border-t border-border p-4">
           <div className="mb-3 px-2">
             <p className="truncate text-sm font-semibold text-foreground">
-              {userProfile?.fullName || "User"}
+              {userProfile.fullName}
             </p>
             <p className="truncate font-mono text-xs text-muted">
-              {userProfile?.orgSlug ? `@${userProfile.orgSlug}` : userProfile?.email || ""}
+              {userProfile.orgSlug ? `@${userProfile.orgSlug}` : userProfile.email}
             </p>
           </div>
           <button
@@ -193,10 +235,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <div className="border-t border-border p-4">
               <div className="mb-3 px-2">
                 <p className="truncate text-sm font-semibold text-foreground">
-                  {userProfile?.fullName || "User"}
+                  {userProfile.fullName}
                 </p>
                 <p className="truncate font-mono text-xs text-muted">
-                  {userProfile?.orgSlug ? `@${userProfile.orgSlug}` : userProfile?.email || ""}
+                  {userProfile.orgSlug ? `@${userProfile.orgSlug}` : userProfile.email}
                 </p>
               </div>
               <button
@@ -237,7 +279,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <Menu size={20} />
             </button>
             <span className="text-sm text-muted">
-              {userProfile?.orgSlug ? userProfile.orgSlug : "Organization"}
+              {userProfile.orgSlug}
             </span>
           </div>
           <div className="flex items-center gap-3">

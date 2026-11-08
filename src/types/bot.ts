@@ -8,9 +8,11 @@ export interface Bot {
   documentCount: number;
   updatedAt: string;
   widgetKey?: string;
+  avatar?: string;
 }
 
 export interface CreateBotInput {
   name: string;
   description: string;
+  avatar?: string;
 }

@@ -97,16 +97,16 @@ export default function Hero() {
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/dashboard"
-                className="hero-cta rounded-full bg-gradient-to-r from-primary to-secondary px-8 py-4 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:-translate-y-1"
+                href="/register"
+                className="hero-cta rounded-full bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-1"
               >
-                Launch Workbench
+                Start building
               </Link>
               <a
                 href="#how"
                 className="hero-cta rounded-full border border-border bg-surface px-8 py-4 text-sm font-semibold transition-transform hover:-translate-y-1"
               >
-                Explore Algorithms
+                See how it works
               </a>
             </div>
           </div>

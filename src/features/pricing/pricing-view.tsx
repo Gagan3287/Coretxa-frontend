@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, CreditCard, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Check, CheckCircle2, ChevronDown, CreditCard, RefreshCw, ShieldCheck, Sparkles } from "lucide-react";
 import { anton } from "@/lib/fonts";
 import { getSession } from "@/lib/auth/session";
 import { PRICING_TIERS, PRICING_FAQS, type PricingTier } from "@/config/pricing";
 import Dialog from "@/components/ui/dialog";
 
 export default function PricingView() {
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PricingTier | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isPaying, setIsPaying] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [isFromBotFlow, setIsFromBotFlow] = useState(false);
 
   useEffect(() => {
     const session = getSession();
@@ -22,6 +27,43 @@ export default function PricingView() {
       return () => cancelAnimationFrame(frame);
     }
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("flow") === "create-bot") {
+        setIsFromBotFlow(true);
+        // Automatically preselect the popular Pro plan for checkout
+        const proPlan = PRICING_TIERS.find((t) => t.id === "pro") || PRICING_TIERS[1];
+        setSelectedPlan(proPlan);
+      }
+    }
+  }, []);
+
+  function handlePlanClick(tier: PricingTier) {
+    setSelectedPlan(tier);
+    setPaymentSuccess(false);
+  }
+
+  function handleSimulatePayment() {
+    if (!selectedPlan) return;
+    setIsPaying(true);
+
+    setTimeout(() => {
+      setIsPaying(false);
+      setPaymentSuccess(true);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("cortexa_subscribed", "true");
+        localStorage.setItem("cortexa_plan", selectedPlan.name);
+      }
+
+      // Automatically redirect back to the bot creation dashboard after 1.2s
+      setTimeout(() => {
+        setSelectedPlan(null);
+        router.push("/dashboard/bots?create=true");
+      }, 1200);
+    }, 1000);
+  }
 
   return (
     <div className="relative min-h-screen bg-background text-foreground pb-24 pt-28 md:pt-36">
@@ -34,6 +76,18 @@ export default function PricingView() {
       </div>
 
       <div className="relative mx-auto max-w-[1400px] px-6 md:px-10">
+        {/* Banner if redirected from Bot Creation flow */}
+        {isFromBotFlow && (
+          <div className="mx-auto mb-10 max-w-2xl rounded-2xl border border-secondary/40 bg-secondary/10 p-4 text-center">
+            <p className="font-mono text-xs uppercase tracking-wider text-secondary font-semibold">
+              ✨ Subscription Required To Deploy Additional Bots
+            </p>
+            <p className="mt-1 text-sm text-foreground/90">
+              Select any plan below to simulate a demo payment and immediately unlock unlimited bot creation!
+            </p>
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5 font-mono text-xs font-semibold tracking-wider text-secondary">
@@ -143,31 +197,19 @@ export default function PricingView() {
                       <span>{tier.ctaLabel}</span>
                       <ArrowRight size={16} />
                     </a>
-                  ) : isLoggedIn ? (
+                  ) : (
                     <button
                       type="button"
-                      onClick={() => setSelectedPlan(tier)}
+                      onClick={() => handlePlanClick(tier)}
                       className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all ${
                         isPopular
                           ? "bg-primary text-primary-foreground shadow-lg hover:opacity-90 hover:shadow-primary/20"
                           : "border border-border bg-foreground/5 text-foreground hover:bg-foreground/10"
                       }`}
                     >
-                      <span>{tier.ctaLabel}</span>
+                      <span>{isFromBotFlow ? "Pay & Unlock Bots" : tier.ctaLabel}</span>
                       <ArrowRight size={16} />
                     </button>
-                  ) : (
-                    <Link
-                      href={tier.ctaHref}
-                      className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all ${
-                        isPopular
-                          ? "bg-primary text-primary-foreground shadow-lg hover:opacity-90 hover:shadow-primary/20"
-                          : "border border-border bg-foreground/5 text-foreground hover:bg-foreground/10"
-                      }`}
-                    >
-                      <span>{tier.ctaLabel}</span>
-                      <ArrowRight size={16} />
-                    </Link>
                   )}
                 </div>
               </div>
@@ -231,10 +273,10 @@ export default function PricingView() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href={isLoggedIn ? "/dashboard" : "/register"}
+              href="/dashboard/bots"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
             >
-              <span>{isLoggedIn ? "Go to Dashboard" : "Get Started Now"}</span>
+              <span>Go to Bots Dashboard</span>
               <ArrowRight size={16} />
             </Link>
             <Link
@@ -247,54 +289,101 @@ export default function PricingView() {
         </section>
       </div>
 
-      {/* Logged-In Plan Change Modal */}
+      {/* Razorpay Demo Payment Modal */}
       {selectedPlan && (
         <Dialog
           open={!!selectedPlan}
-          onClose={() => setSelectedPlan(null)}
-          title={`Plan Request: ${selectedPlan.name}`}
+          onClose={() => !isPaying && setSelectedPlan(null)}
+          title={`Checkout — ${selectedPlan.name} Plan`}
         >
-          <div className="space-y-4 text-sm text-muted">
-            <div className="flex items-center gap-3 rounded-xl bg-primary/10 p-3.5 text-foreground">
-              <CreditCard className="shrink-0 text-primary" size={20} />
-              <div>
-                <p className="font-semibold text-sm">
-                  {selectedPlan.name} Plan ({selectedPlan.bots} Bots)
+          <div className="space-y-5 text-sm text-muted">
+            <div className="flex items-center justify-between rounded-2xl border border-primary/20 bg-primary/10 p-4 text-foreground">
+              <div className="flex items-center gap-3">
+                <CreditCard className="shrink-0 text-primary" size={24} />
+                <div>
+                  <p className="font-semibold text-base">
+                    {selectedPlan.name} Subscription
+                  </p>
+                  <p className="text-xs text-muted">
+                    Capacity for {selectedPlan.bots} active AI assistants
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-display text-2xl font-bold text-foreground">
+                  {selectedPlan.priceInr ? `₹${selectedPlan.priceInr.toLocaleString("en-IN")}` : "Custom"}
                 </p>
-                <p className="text-xs text-muted">
-                  {selectedPlan.priceInr ? `₹${selectedPlan.priceInr.toLocaleString("en-IN")}/month` : "Custom"}
-                </p>
+                <span className="font-mono text-[10px] text-muted">Billed monthly</span>
               </div>
             </div>
 
-            <p className="leading-relaxed">
-              You are currently logged into an active organization. In-dashboard self-serve card and
-              UPI upgrades are launching soon.
-            </p>
+            {paymentSuccess ? (
+              <div className="space-y-3 rounded-2xl border border-green-500/30 bg-green-500/10 p-5 text-center text-green-400">
+                <CheckCircle2 size={36} className="mx-auto text-green-400" />
+                <p className="font-semibold text-base">Payment Authorized Successfully!</p>
+                <p className="text-xs text-green-300/80">
+                  Subscription is active. Redirecting you to create your bot now...
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3 rounded-2xl border border-border bg-background/50 p-4">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted font-mono uppercase">Payment Gateway</span>
+                    <span className="flex items-center gap-1 font-mono text-secondary font-semibold">
+                      <ShieldCheck size={14} /> Razorpay Sandbox (Demo Mode)
+                    </span>
+                  </div>
+                  <div className="border-t border-border/40 pt-2 text-xs space-y-1.5 text-muted">
+                    <div className="flex justify-between">
+                      <span>Plan Base Price</span>
+                      <span>₹{selectedPlan.priceInr?.toLocaleString("en-IN") || "0"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>GST (18%)</span>
+                      <span className="text-green-400">Waived for Demo</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-foreground pt-1 border-t border-border/40">
+                      <span>Total Amount Due</span>
+                      <span>₹{selectedPlan.priceInr?.toLocaleString("en-IN") || "0"}</span>
+                    </div>
+                  </div>
+                </div>
 
-            <p className="leading-relaxed">
-              To immediately increase your assistant quota to{" "}
-              <strong className="text-foreground">{selectedPlan.bots} bots</strong>, our operations
-              team will update your tenant tier directly upon request.
-            </p>
+                <p className="text-xs text-muted">
+                  Clicking below simulates a real payment confirmation and instantly grants your bot creation quota.
+                </p>
 
-            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-              <a
-                href={`mailto:support@cortexa.io?subject=Upgrade%20to%20${encodeURIComponent(
-                  selectedPlan.name
-                )}%20Plan`}
-                className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition hover:opacity-90"
-              >
-                Email Support to Upgrade
-              </a>
-              <button
-                type="button"
-                onClick={() => setSelectedPlan(null)}
-                className="rounded-xl border border-border px-4 py-2.5 text-center text-sm font-medium text-muted hover:bg-foreground/5"
-              >
-                Close
-              </button>
-            </div>
+                <div className="flex flex-col gap-2.5 sm:flex-row pt-2">
+                  <button
+                    type="button"
+                    onClick={handleSimulatePayment}
+                    disabled={isPaying}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary px-5 py-3 text-center text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:opacity-50 shadow-lg shadow-primary/20"
+                  >
+                    {isPaying ? (
+                      <>
+                        <RefreshCw size={16} className="animate-spin" />
+                        <span>Processing Payment...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Pay ₹{selectedPlan.priceInr?.toLocaleString("en-IN")} & Activate</span>
+                        <ArrowRight size={16} />
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPaying}
+                    onClick={() => setSelectedPlan(null)}
+                    className="rounded-xl border border-border px-4 py-3 text-center text-sm font-medium text-muted hover:bg-foreground/5 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </Dialog>
       )}
