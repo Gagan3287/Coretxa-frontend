@@ -97,7 +97,7 @@ export default function Hero() {
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/register"
+                href="/dashboard"
                 className="hero-cta rounded-full bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-1"
               >
                 Start building

@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------
+# SECRETS — never commit any of these
+# ---------------------------------------------------------------
+.env
+.env.*
+# Re-include the example files — placeholder values only, never real secrets
+!.env.example
+!**/.env.example
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+/lib/
+/lib64/
+wheels/
+
+# ---------------------------------------------------------------
+# Virtual environments
+# ---------------------------------------------------------------
+.venv/
+venv/
+ENV/
+env/
+
+# ---------------------------------------------------------------
+# Testing & coverage
+# ---------------------------------------------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.cache/
+
+# ---------------------------------------------------------------
+# IDEs
+# ---------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---------------------------------------------------------------
+# Uploaded / stored document files (never commit user data)
+# ---------------------------------------------------------------
+storage/
+test_storage/
+uploads/
+
+# ---------------------------------------------------------------
+# Frontend — deployed independently to Vercel from its own repo
+# ---------------------------------------------------------------
+frontend/
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.turbo/
+
+# ---------------------------------------------------------------
+# OS
+# ---------------------------------------------------------------
+.DS_Store
+Thumbs.db
+

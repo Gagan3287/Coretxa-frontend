@@ -1,0 +1,12 @@
+# Dev / test dependencies — not needed in production.
+# Includes runtime deps via the line below.
+-r requirements.txt
+
+# Testing
+pytest==9.1.1
+pytest-asyncio==1.4.0
+python-dotenv==1.1.0
+
+# Test file generation helpers
+reportlab==5.0.0
+Pillow==11.2.1
