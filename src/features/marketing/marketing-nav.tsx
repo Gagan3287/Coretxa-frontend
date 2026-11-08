@@ -90,7 +90,7 @@ export default function MarketingNav() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Link
-              href="/dashboard"
+              href="/login"
               className="hidden rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 sm:inline-flex"
             >
               Open Dashboard
@@ -119,7 +119,7 @@ export default function MarketingNav() {
               </a>
             ))}
             <Link
-              href="/dashboard"
+              href="/login"
               onClick={() => setOpen(false)}
               className="mt-2 block py-3 text-sm font-semibold text-secondary"
             >

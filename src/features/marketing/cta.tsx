@@ -69,7 +69,7 @@ export default function Cta() {
         </p>
         <Link
           ref={button}
-          href="/dashboard"
+          href="/login"
           className="mt-10 inline-flex rounded-full bg-primary px-10 py-5 text-sm font-semibold text-primary-foreground"
         >
           Start building

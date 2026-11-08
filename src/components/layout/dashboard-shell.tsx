@@ -84,6 +84,7 @@ function Logo() {
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [userProfile, setUserProfile] = useState<AuthUser>({
     id: "dev-user",
     fullName: "Cortexa Developer",
@@ -112,14 +113,20 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     });
   };
 
-  // Gracefully verify session if token exists
+  // Auth gate: Require login barrier before accessing dashboard
   useEffect(() => {
     let cancelled = false;
     const session = getSession();
     if (!session?.token) {
-      // Demo fallback: default active developer session
+      const target = encodeURIComponent(pathname || "/dashboard");
+      router.replace(`/login?next=${target}`);
       return;
     }
+
+    if (session.user) {
+      setUserProfile(session.user);
+    }
+    setCheckingAuth(false);
 
     apiClient<BackendUserMeResponse>("/auth/me")
       .then((me) => {
@@ -135,19 +142,35 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         setUserProfile(updatedUser);
       })
       .catch(() => {
-        // If backend is offline/not reachable, gracefully retain developer profile
+        // If backend is offline/not reachable, gracefully retain current active profile
       });
 
     return () => {
       cancelled = true;
     };
-  }, [pathname]);
+  }, [pathname, router]);
 
   function handleReturnHome() {
     router.push("/");
   }
 
+  function handleSignOut() {
+    clearSession();
+    router.replace("/login");
+  }
+
   const initials = (userProfile.fullName || "CX").slice(0, 2).toUpperCase();
+
+  if (checkingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="font-mono text-xs text-muted">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -201,6 +224,14 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <Home size={16} />
             <span>Back to Home</span>
           </button>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-red-500/10 hover:text-red-400"
+          >
+            <LogOut size={16} />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
 
@@ -248,6 +279,14 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               >
                 <Home size={16} />
                 <span>Back to Home</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-red-500/10 hover:text-red-400"
+              >
+                <LogOut size={16} />
+                <span>Sign Out</span>
               </button>
             </div>
           </aside>

@@ -16,7 +16,7 @@ export default function Footer() {
           <a href="#features" className="hover:text-foreground">Features</a>
           <a href="#faq" className="hover:text-foreground">FAQ</a>
           <Link href="/pricing" className="hover:text-foreground">Pricing</Link>
-          <Link href="/dashboard" className="hover:text-foreground">Dashboard</Link>
+          <Link href="/login" className="hover:text-foreground">Dashboard</Link>
         </nav>
       </div>
       <p className="px-6 pb-8 text-xs text-muted md:px-8">© {new Date().getFullYear()} Cortexa</p>
