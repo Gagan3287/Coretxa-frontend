@@ -180,17 +180,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           isCollapsed ? "-translate-x-full w-64" : "translate-x-0 w-64"
         }`}
       >
-        {/* Floating Arrow Toggle Button on the sidebar border */}
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          aria-label="Collapse sidebar"
-          title="Collapse sidebar"
-          className="absolute -right-3.5 top-20 z-40 hidden md:flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-lg transition-transform hover:scale-110 hover:border-primary hover:text-foreground active:scale-95"
-        >
-          <ChevronLeft size={14} />
-        </button>
-
         <div>
           <div className="flex h-16 items-center justify-between px-6">
             <Logo />
@@ -234,19 +223,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </button>
         </div>
       </aside>
-
-      {/* Floating Edge Arrow Tab when Sidebar is Minimized/Collapsed */}
-      {isCollapsed && (
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          aria-label="Open sidebar"
-          title="Open sidebar"
-          className="fixed left-0 top-20 z-40 hidden md:flex h-10 w-8 items-center justify-center rounded-r-xl border border-l-0 border-border bg-surface/90 backdrop-blur-md text-muted shadow-2xl transition-all hover:w-9 hover:border-primary/50 hover:text-secondary active:scale-95"
-        >
-          <ChevronRight size={18} />
-        </button>
-      )}
 
       {/* Mobile Drawer */}
       {open && (
@@ -297,17 +273,19 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <div className={`transition-all duration-300 ease-in-out ${isCollapsed ? "md:pl-0" : "md:pl-64"}`}>
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur">
           <div className="flex items-center gap-3">
-            {/* Desktop Minimizer Toggle in Header */}
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              aria-label={isCollapsed ? "Open sidebar" : "Collapse sidebar"}
-              title={isCollapsed ? "Open sidebar" : "Collapse sidebar"}
-              className="hidden md:flex items-center gap-1.5 rounded-lg border border-border/60 bg-surface/70 px-2.5 py-1.5 text-xs text-muted transition hover:border-border hover:bg-surface hover:text-foreground active:scale-95"
-            >
-              {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-              <span className="font-mono text-[11px]">{isCollapsed ? "Sidebar" : "Collapse"}</span>
-            </button>
+            {/* Desktop Minimizer Toggle in Header - Only shown when sidebar is collapsed */}
+            {isCollapsed && (
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                aria-label="Open sidebar"
+                title="Open sidebar"
+                className="hidden md:flex items-center gap-1.5 rounded-lg border border-border/60 bg-surface/70 px-2.5 py-1.5 text-xs text-muted transition hover:border-border hover:bg-surface hover:text-foreground active:scale-95"
+              >
+                <ChevronRight size={16} />
+                <span className="font-mono text-[11px]">Sidebar</span>
+              </button>
+            )}
 
             {/* Mobile Menu Button */}
             <button
