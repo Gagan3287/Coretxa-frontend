@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Download, Menu, X } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -89,6 +89,16 @@ export default function MarketingNav() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <a
+              href="https://github.com/Gagan3287/Coretxa-frontend/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden items-center gap-1.5 rounded-full border border-border/80 bg-surface/80 px-4 py-2 text-xs font-semibold text-muted transition hover:border-secondary hover:text-foreground md:inline-flex"
+              title="Download Desktop App for Windows"
+            >
+              <Download size={14} />
+              <span>Download (.exe)</span>
+            </a>
             <Link
               href="/login"
               className="hidden rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 sm:inline-flex"
@@ -125,6 +135,16 @@ export default function MarketingNav() {
             >
               Open Dashboard
             </Link>
+            <a
+              href="https://github.com/Gagan3287/Coretxa-frontend/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="mt-1 flex items-center gap-2 py-2 text-sm text-muted hover:text-foreground"
+            >
+              <Download size={15} />
+              <span>Download Desktop App (.exe)</span>
+            </a>
           </nav>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ParticleNetwork from "@/components/effects/particle-network";
@@ -102,6 +103,15 @@ export default function Hero() {
               >
                 Start building
               </Link>
+              <a
+                href="https://github.com/Gagan3287/Coretxa-frontend/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hero-cta inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-6 py-4 text-sm font-semibold text-secondary transition-transform hover:-translate-y-1 hover:border-secondary hover:bg-secondary/20"
+              >
+                <Download size={16} />
+                Download App (.exe)
+              </a>
               <a
                 href="#how"
                 className="hero-cta rounded-full border border-border bg-surface px-8 py-4 text-sm font-semibold transition-transform hover:-translate-y-1"
