@@ -90,9 +90,8 @@ export default function MarketingNav() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <a
-              href="https://github.com/Gagan3287/Coretxa-frontend/releases"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/api/download"
+              download="Cortexa-Setup-1.0.0.exe"
               className="hidden items-center gap-1.5 rounded-full border border-border/80 bg-surface/80 px-4 py-2 text-xs font-semibold text-muted transition hover:border-secondary hover:text-foreground md:inline-flex"
               title="Download Desktop App for Windows"
             >
@@ -136,9 +135,8 @@ export default function MarketingNav() {
               Open Dashboard
             </Link>
             <a
-              href="https://github.com/Gagan3287/Coretxa-frontend/releases"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/api/download"
+              download="Cortexa-Setup-1.0.0.exe"
               onClick={() => setOpen(false)}
               className="mt-1 flex items-center gap-2 py-2 text-sm text-muted hover:text-foreground"
             >

@@ -104,9 +104,8 @@ export default function Hero() {
                 Start building
               </Link>
               <a
-                href="https://github.com/Gagan3287/Coretxa-frontend/releases"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/api/download"
+                download="Cortexa-Setup-1.0.0.exe"
                 className="hero-cta inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-6 py-4 text-sm font-semibold text-secondary transition-transform hover:-translate-y-1 hover:border-secondary hover:bg-secondary/20"
               >
                 <Download size={16} />
