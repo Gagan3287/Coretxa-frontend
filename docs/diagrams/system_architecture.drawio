@@ -1,0 +1,115 @@
+<mxfile host="app.diagrams.net" modified="2026-11-10T08:30:00.000Z" agent="Cortexa" version="24.0.0" type="device">
+  <diagram id="system-architecture" name="5.1 System Architecture">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- CLIENT TIER -->
+        <mxCell id="client-box" value="CLIENT &amp; PRESENTATION TIER" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#475569;fontColor=#f8fafc;fontStyle=1;fontSize=13;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="260" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="client-web" value="&lt;b&gt;Web Browser Client&lt;/b&gt;&lt;br&gt;Next.js 16 (App Router)&lt;br&gt;React 19 &amp; Tailwind CSS v4&lt;br&gt;GSAP Interactive Animations&lt;br&gt;&lt;i&gt;(cortexa-io.vercel.app)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="client-box">
+          <mxGeometry x="20" y="50" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="client-desktop" value="&lt;b&gt;Desktop Client (Windows)&lt;/b&gt;&lt;br&gt;Electron 45 Native Shell&lt;br&gt;Single-Instance Window Manager&lt;br&gt;NSIS Auto-Installer&lt;br&gt;&lt;i&gt;(Cortexa.Setup.1.0.0.exe)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="client-box">
+          <mxGeometry x="20" y="160" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="client-widget" value="&lt;b&gt;Embeddable Chat Widget&lt;/b&gt;&lt;br&gt;Vanilla JS / Iframe SDK&lt;br&gt;Cryptographic Widget Key&lt;br&gt;Cross-Origin Host Support" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="client-box">
+          <mxGeometry x="20" y="270" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- EDGE & CDN TIER -->
+        <mxCell id="edge-box" value="EDGE &amp; CLOUD DISTRIBUTION TIER" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#475569;fontColor=#f8fafc;fontStyle=1;fontSize=13;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="240" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-vercel" value="&lt;b&gt;Vercel Global Edge CDN&lt;/b&gt;&lt;br&gt;SSR &amp; Static Edge Delivery&lt;br&gt;Direct &lt;b&gt;/api/download&lt;/b&gt; Stream&lt;br&gt;Automated CI/CD from Git&lt;br&gt;SSL / TLS Termination" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="edge-box">
+          <mxGeometry x="20" y="60" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-github" value="&lt;b&gt;GitHub Releases CDN&lt;/b&gt;&lt;br&gt;High-Speed Asset Storage&lt;br&gt;Free Global Bandwidth&lt;br&gt;Distributes Windows Installer&lt;br&gt;&lt;i&gt;Tag: v1.0.0&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="edge-box">
+          <mxGeometry x="20" y="210" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- BACKEND API & WORKER TIER -->
+        <mxCell id="backend-box" value="BACKEND APPLICATION TIER (Render.com)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#475569;fontColor=#f8fafc;fontStyle=1;fontSize=13;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="620" y="40" width="270" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-fastapi" value="&lt;b&gt;FastAPI REST Service&lt;/b&gt;&lt;br&gt;Python 3.11 / Uvicorn ASGI&lt;br&gt;JWT Auth &amp; Password Hashing&lt;br&gt;Multi-Tenant Middleware&lt;br&gt;Bot &amp; Document Endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="backend-box">
+          <mxGeometry x="20" y="50" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-worker" value="&lt;b&gt;Background Ingestion Worker&lt;/b&gt;&lt;br&gt;Asyncio Event Loop Task&lt;br&gt;Consumer: worker-1&lt;br&gt;Auto-Reconnect Watchdog&lt;br&gt;Exponential Backoff Retries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="backend-box">
+          <mxGeometry x="20" y="160" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-parser" value="&lt;b&gt;Parser &amp; Chunking Engine&lt;/b&gt;&lt;br&gt;PyPDF Text Extractor&lt;br&gt;Byte Cleanser (&gt;90% printable)&lt;br&gt;Max 400 Tokens / Chunk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="backend-box">
+          <mxGeometry x="20" y="270" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- DATA & CLOUD SERVICES TIER -->
+        <mxCell id="data-box" value="PERSISTENCE &amp; AI CLOUD SERVICES TIER" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#475569;fontColor=#f8fafc;fontStyle=1;fontSize=13;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="930" y="40" width="260" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="data-db" value="&lt;b&gt;Supabase PostgreSQL 15&lt;/b&gt;&lt;br&gt;pgvector Extension (768 Dim)&lt;br&gt;&lt;b&gt;Row-Level Security (RLS)&lt;/b&gt;&lt;br&gt;Role: cortexa_app (Non-Superuser)&lt;br&gt;Tenants, Bots, Chunks Tables" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="data-box">
+          <mxGeometry x="20" y="50" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="data-redis" value="&lt;b&gt;Upstash Redis (Serverless)&lt;/b&gt;&lt;br&gt;TLS Protected (rediss://)&lt;br&gt;Stream: &lt;b&gt;ingestion&lt;/b&gt;&lt;br&gt;Stream: &lt;b&gt;ingestion_dlq&lt;/b&gt;&lt;br&gt;Group: ingestion-workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="data-box">
+          <mxGeometry x="20" y="170" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="data-gemini" value="&lt;b&gt;Google Gemini AI API&lt;/b&gt;&lt;br&gt;Model: gemini-embedding-001&lt;br&gt;Dimension: 768 Float Vectors&lt;br&gt;Rate-Limited Token Bucket" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="data-box">
+          <mxGeometry x="20" y="280" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- CONNECTORS / DATA FLOWS -->
+        <mxCell id="e1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="client-web" target="edge-vercel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Loads App" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="client-desktop" target="edge-vercel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="1-Click /api/download" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#818cf8;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="edge-vercel" target="edge-github">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="CORS REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34d399;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="edge-vercel" target="backend-fastapi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Auth &amp; Session" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f59e0b;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="backend-fastapi" target="data-db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="110" />
+              <mxPoint x="900" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="XADD ingestion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f59e0b;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="backend-fastapi" target="data-redis">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="130" />
+              <mxPoint x="900" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="XREADGROUP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34d399;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="data-redis" target="backend-worker">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="240" />
+              <mxPoint x="910" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="Extract &amp; Chunk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34d399;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="backend-worker" target="backend-parser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="Batch Embed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f59e0b;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="backend-parser" target="data-gemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="Store Vector Chunks" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f59e0b;fontColor=#f8fafc;strokeWidth=2;" edge="1" parent="1" source="backend-worker" target="data-db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="200" />
+              <mxPoint x="910" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

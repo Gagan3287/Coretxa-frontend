@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" modified="2026-11-10T08:50:00.000Z" agent="Cortexa" version="24.0.0" type="device">
+  <diagram id="activity-diagram" name="5.5 Activity Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- START NODE -->
+        <mxCell id="act-start" value="" style="ellipse;fillColor=#22c55e;strokeColor=#16a34a;" vertex="1" parent="1">
+          <mxGeometry x="385" y="30" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- UPLOAD ACTION -->
+        <mxCell id="act-upload" value="Tenant Admin Uploads&#xa;PDF Document" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="90" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- DECISION: FILE VALID -->
+        <mxCell id="dec-valid" value="Is File Valid?&#xa;(PDF &lt;= 10MB)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="170" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ERROR REJECT -->
+        <mxCell id="act-reject" value="Reject Upload &amp;&#xa;Display Validation Error" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7f1d1d;strokeColor=#ef4444;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="540" y="180" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- END NODE 1 -->
+        <mxCell id="act-end1" value="" style="ellipse;html=1;shape=endState;fillColor=#ef4444;strokeColor=#b91c1c;" vertex="1" parent="1">
+          <mxGeometry x="750" y="190" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- STORE & DB RECORD -->
+        <mxCell id="act-db" value="Persist File &amp; Insert Record&#xa;(Document status: PROCESSING)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="270" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ENQUEUE REDIS -->
+        <mxCell id="act-redis" value="Enqueue Job Message to&#xa;Redis Stream 'ingestion'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="350" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- WORKER CONSUME -->
+        <mxCell id="act-consume" value="Ingestion Worker Consumes&#xa;Message via XREADGROUP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="430" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- EXTRACT TEXT -->
+        <mxCell id="act-extract" value="Extract &amp; Sanitize Text&#xa;with PyPDF Parser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="510" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- DECISION: TEXT VALID -->
+        <mxCell id="dec-text" value="Extract OK &amp;&#xa;&gt;=90% Printable?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="335" y="590" width="130" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- TERMINAL FAILURE -->
+        <mxCell id="act-fail" value="Mark Status: FAILED&#xa;Forward to 'ingestion_dlq'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7f1d1d;strokeColor=#ef4444;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="540" y="600" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- CHUNK TEXT -->
+        <mxCell id="act-chunk" value="Split Text into Semantic&#xa;Chunks (&lt;= 400 Tokens)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="690" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- EMBED CALL -->
+        <mxCell id="act-embed" value="Batch Embed Chunks via&#xa;Google Gemini API (768 Dim)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="770" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- STORE VECTORS -->
+        <mxCell id="act-save" value="Store Vector Chunks in Supabase&#xa;&amp; Atomically Set Status: READY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="850" width="200" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- XACK STREAM -->
+        <mxCell id="act-ack" value="Send XACK to Redis Stream&#xa;&amp; Update Live Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#22c55e;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="930" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- SUCCESS END -->
+        <mxCell id="act-end2" value="" style="ellipse;html=1;shape=endState;fillColor=#22c55e;strokeColor=#16a34a;" vertex="1" parent="1">
+          <mxGeometry x="385" y="1010" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- CONNECTIONS -->
+        <mxCell id="c1" style="strokeColor=#38bdf8;strokeWidth=1.5;" edge="1" parent="1" source="act-start" target="act-upload"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" style="strokeColor=#38bdf8;strokeWidth=1.5;" edge="1" parent="1" source="act-upload" target="dec-valid"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" value="[No]" style="strokeColor=#ef4444;fontColor=#ef4444;strokeWidth=1.5;" edge="1" parent="1" source="dec-valid" target="act-reject"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" style="strokeColor=#ef4444;strokeWidth=1.5;" edge="1" parent="1" source="act-reject" target="act-end1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c5" value="[Yes]" style="strokeColor=#34d399;fontColor=#34d399;strokeWidth=1.5;" edge="1" parent="1" source="dec-valid" target="act-db"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c6" style="strokeColor=#38bdf8;strokeWidth=1.5;" edge="1" parent="1" source="act-db" target="act-redis"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c7" style="strokeColor=#f59e0b;strokeWidth=1.5;" edge="1" parent="1" source="act-redis" target="act-consume"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c8" style="strokeColor=#34d399;strokeWidth=1.5;" edge="1" parent="1" source="act-consume" target="act-extract"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c9" style="strokeColor=#34d399;strokeWidth=1.5;" edge="1" parent="1" source="act-extract" target="dec-text"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c10" value="[No]" style="strokeColor=#ef4444;fontColor=#ef4444;strokeWidth=1.5;" edge="1" parent="1" source="dec-text" target="act-fail"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c11" style="strokeColor=#ef4444;strokeWidth=1.5;" edge="1" parent="1" source="act-fail" target="act-end1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c12" value="[Yes]" style="strokeColor=#34d399;fontColor=#34d399;strokeWidth=1.5;" edge="1" parent="1" source="dec-text" target="act-chunk"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c13" style="strokeColor=#34d399;strokeWidth=1.5;" edge="1" parent="1" source="act-chunk" target="act-embed"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c14" style="strokeColor=#818cf8;strokeWidth=1.5;" edge="1" parent="1" source="act-embed" target="act-save"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c15" style="strokeColor=#f59e0b;strokeWidth=1.5;" edge="1" parent="1" source="act-save" target="act-ack"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c16" style="strokeColor=#22c55e;strokeWidth=1.5;" edge="1" parent="1" source="act-ack" target="act-end2"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

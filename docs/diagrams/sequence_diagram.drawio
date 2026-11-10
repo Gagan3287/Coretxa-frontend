@@ -1,0 +1,169 @@
+<mxfile host="app.diagrams.net" modified="2026-11-10T08:45:00.000Z" agent="Cortexa" version="24.0.0" type="device">
+  <diagram id="sequence-diagram" name="5.4 Sequence Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- LIFELINES (PARTICIPANTS) -->
+        <mxCell id="p-user" value="Tenant Admin&#xa;(Browser/Desktop)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-ui" value="Next.js Frontend&#xa;(Dashboard UI)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="230" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-api" value="FastAPI Server&#xa;(Backend API)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-db" value="PostgreSQL DB&#xa;(Supabase + RLS)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="570" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-redis" value="Redis Stream&#xa;(Upstash Queue)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="740" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-worker" value="Ingestion Worker&#xa;(Asyncio Task)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-ai" value="Google Gemini API&#xa;(Embedding Model)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#1e293b;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="40" width="130" height="700" as="geometry" />
+        </mxCell>
+
+        <!-- SEQUENCE CALLS -->
+        <mxCell id="sq1" value="1. Drop &amp; Upload PDF Document" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-user" target="p-ui">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint y="110" as="offset" />
+            <mxPoint x="125" y="110" as="sourcePoint" />
+            <mxPoint x="295" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq2" value="2. POST /api/v1/bots/{bot_id}/documents (Multipart Form)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-ui" target="p-api">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="295" y="140" as="sourcePoint" />
+            <mxPoint x="465" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq3" value="3. Validate File Size (&lt;=10MB) &amp; Checksum" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#34d399;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-api">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="170" />
+              <mxPoint x="500" y="190" />
+            </Array>
+            <mxPoint x="465" y="170" as="sourcePoint" />
+            <mxPoint x="470" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq4" value="4. Insert Document &amp; Version (Status: PROCESSING)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-db">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="465" y="210" as="sourcePoint" />
+            <mxPoint x="635" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq5" value="5. XADD ingestion {version_id, tenant_id, bot_id}" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-redis">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="465" y="240" as="sourcePoint" />
+            <mxPoint x="805" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq6" value="6. 201 Created {document_id, status: 'processing'}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-ui">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="465" y="270" as="sourcePoint" />
+            <mxPoint x="295" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq7" value="7. Display Badge: 'PROCESSING'" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-ui" target="p-user">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="295" y="290" as="sourcePoint" />
+            <mxPoint x="125" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq8" value="8. XREADGROUP ingestion-workers (block=30s)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#34d399;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-worker" target="p-redis">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="975" y="320" as="sourcePoint" />
+            <mxPoint x="805" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq9" value="9. Parse PDF Text, Validate &amp; Split Chunks (&lt;=400 tokens)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#34d399;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-worker" target="p-worker">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="350" />
+              <mxPoint x="1010" y="370" />
+            </Array>
+            <mxPoint x="975" y="350" as="sourcePoint" />
+            <mxPoint x="980" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq10" value="10. Batch embed_content(chunks)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-worker" target="p-ai">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="975" y="400" as="sourcePoint" />
+            <mxPoint x="1145" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq11" value="11. Return 768-Dim Dense Float Vectors" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-ai" target="p-worker">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="1145" y="430" as="sourcePoint" />
+            <mxPoint x="975" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq12" value="12. Atomic Commit: Insert Chunks + Set Status = 'ready'" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-worker" target="p-db">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="975" y="460" as="sourcePoint" />
+            <mxPoint x="635" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq13" value="13. XACK ingestion (Acknowledge Message)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-worker" target="p-redis">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="975" y="490" as="sourcePoint" />
+            <mxPoint x="805" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq14" value="14. Periodic Poll: GET /api/v1/bots/{id}/documents" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-ui" target="p-api">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="295" y="530" as="sourcePoint" />
+            <mxPoint x="465" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq15" value="15. Query Document State" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#f59e0b;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-db">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="465" y="560" as="sourcePoint" />
+            <mxPoint x="635" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq16" value="16. 200 OK [Status: 'ready', Chunks: 24]" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-api" target="p-ui">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="465" y="590" as="sourcePoint" />
+            <mxPoint x="295" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="sq17" value="17. Update UI Badge to 'READY' (Active Live Assistant)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#34d399;fontColor=#f8fafc;fontSize=10;" edge="1" parent="1" source="p-ui" target="p-user">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="295" y="620" as="sourcePoint" />
+            <mxPoint x="125" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

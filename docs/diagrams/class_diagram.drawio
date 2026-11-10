@@ -1,0 +1,71 @@
+<mxfile host="app.diagrams.net" modified="2026-11-10T08:40:00.000Z" agent="Cortexa" version="24.0.0" type="device">
+  <diagram id="class-diagram" name="5.3 Class Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TENANT CLASS -->
+        <mxCell id="cls-tenant" value="&lt;b&gt;Tenant&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ name: String&#xa;+ slug: String [UK]&#xa;+ plan: String&#xa;+ created_at: DateTime&#xa;&lt;hr&gt;&#xa;+ create_bot()&#xa;+ set_plan()&#xa;+ get_active_bots()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="190" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- USER CLASS -->
+        <mxCell id="cls-user" value="&lt;b&gt;User&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ tenant_id: UUID [FK]&#xa;+ email: String [UK]&#xa;+ hashed_password: String&#xa;+ role: RoleEnum&#xa;+ full_name: String&#xa;+ phone: String&#xa;&lt;hr&gt;&#xa;+ verify_password()&#xa;+ generate_jwt_token()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="270" width="190" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- BOT CLASS -->
+        <mxCell id="cls-bot" value="&lt;b&gt;Bot&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ tenant_id: UUID [FK]&#xa;+ name: String&#xa;+ slug: String&#xa;+ avatar: String (10 Presets)&#xa;+ widget_key: String [UK]&#xa;+ branding_json: JSONB&#xa;+ llm_overrides: JSONB&#xa;+ status: BotStatusEnum&#xa;&lt;hr&gt;&#xa;+ upload_document()&#xa;+ query_knowledge_base()&#xa;+ update_branding()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#818cf8;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="220" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- DOCUMENT CLASS -->
+        <mxCell id="cls-document" value="&lt;b&gt;Document&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ tenant_id: UUID [FK]&#xa;+ bot_id: UUID [FK]&#xa;+ current_version_id: UUID&#xa;+ title: String&#xa;+ status: DocStatusEnum&#xa;+ error_message: String&#xa;&lt;hr&gt;&#xa;+ create_new_version()&#xa;+ mark_ready()&#xa;+ mark_failed()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="40" width="200" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- DOCUMENT VERSION CLASS -->
+        <mxCell id="cls-docver" value="&lt;b&gt;DocumentVersion&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ document_id: UUID [FK]&#xa;+ version_number: Integer&#xa;+ file_path: String&#xa;+ content_sha256: String&#xa;+ status: String&#xa;+ error_message: String&#xa;&lt;hr&gt;&#xa;+ trigger_ingestion()&#xa;+ enqueue_redis_stream()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="300" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- CHUNK CLASS -->
+        <mxCell id="cls-chunk" value="&lt;b&gt;Chunk&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ tenant_id: UUID [FK]&#xa;+ bot_id: UUID [FK]&#xa;+ document_id: UUID [FK]&#xa;+ document_version_id: UUID [FK]&#xa;+ content: Text&#xa;+ chunk_index: Integer&#xa;+ embedding: Vector[768]&#xa;+ chunk_metadata: JSONB&#xa;&lt;hr&gt;&#xa;+ calculate_cosine_distance()&#xa;+ get_token_count()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#0f172a;strokeColor=#f59e0b;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="940" y="160" width="220" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- AUDIT LOG CLASS -->
+        <mxCell id="cls-audit" value="&lt;b&gt;AuditLog&lt;/b&gt;&#xa;&lt;hr&gt;&#xa;+ id: UUID [PK]&#xa;+ tenant_id: UUID [FK]&#xa;+ actor_id: UUID&#xa;+ action: String&#xa;+ details: JSONB&#xa;+ created_at: DateTime&#xa;&lt;hr&gt;&#xa;+ record_event()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="190" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- RELATIONSHIPS -->
+        <mxCell id="rel-1" value="1..* contains" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-tenant" target="cls-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel-2" value="1..* owns" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-tenant" target="cls-bot">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel-3" value="1..* assigns" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#818cf8;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-bot" target="cls-document">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel-4" value="1..* versions" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#34d399;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-document" target="cls-docver">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel-5" value="1..* generates" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#f59e0b;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-docver" target="cls-chunk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel-6" value="1..* tracks" style="endArrow=diamondThin;endFill=1;endSize=14;html=1;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=1.5;" edge="1" parent="1" source="cls-tenant" target="cls-audit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
